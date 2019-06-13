@@ -2,16 +2,16 @@
 <teamcity-plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:schemas-jetbrains-com:teamcity-plugin-v1-xml">
   <info>
     <name>tcChatBot</name>
-    <display-name>tcChatBot</display-name>
+    <display-name>TeamCity Chat Bot</display-name>
     <version>@Version@</version>
-    <description>Plugin description</description>
+    <description>Chat Bot for TeamCity</description>
     <download-url>Plugin download URL</download-url>
-    <email>Plugin author e-mail</email>
+    <email>netwolfuk+tcplugins@gmail.com</email>
     <vendor>
       <name>@VendorName@</name>
       <url>@VendorURL@</url>
       <logo>Plugin vendor logo URL</logo>
     </vendor>
   </info>
-  <deployment use-separate-classloader="true"/>
+  <deployment use-separate-classloader="true" allow-runtime-reload="true"/>
 </teamcity-plugin>

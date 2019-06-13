@@ -8,6 +8,14 @@
   </parent>
   <artifactId>tcChatBot-server</artifactId>
   <packaging>jar</packaging>
+
+	<repositories>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+  
   <dependencies>
 
     <dependency>
@@ -15,6 +23,12 @@
       <artifactId>server-api</artifactId>
       <version>${teamcity-version}</version>
       <scope>provided</scope>
+      <exclusions>
+      	<exclusion>
+      		<groupId>org.slf4j</groupId>
+      		<artifactId>slf4j-api</artifactId>
+      	</exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -24,12 +38,43 @@
       <type>war</type>
       <scope>provided</scope>
     </dependency>
+    
+    <dependency>
+    	<groupId>org.projectlombok</groupId>
+    	<artifactId>lombok</artifactId>
+    	<version>1.18.8</version>
+    </dependency>
+    
+	<dependency>
+	    <groupId>com.github.allbegray</groupId>
+	    <artifactId>slack-api</artifactId>
+	    <version>1.7.0.RELEASE</version>
+	</dependency>
 
     <dependency>
       <groupId>org.jetbrains.teamcity</groupId>
       <artifactId>tests-support</artifactId>
       <version>${teamcity-version}</version>
       <scope>test</scope>
+      <exclusions>
+      	<exclusion>
+      		<groupId>org.testng</groupId>
+      		<artifactId>testng</artifactId>
+      	</exclusion>
+      </exclusions>
+    </dependency>
+    
+    <dependency>
+    	<groupId>org.mockito</groupId>
+    	<artifactId>mockito-core</artifactId>
+    	<version>2.2.7</version>
+    </dependency>
+
+    <dependency>
+    	<groupId>org.slf4j</groupId>
+    	<artifactId>slf4j-api</artifactId>
+    	<version>1.7.5</version>
+    	<scope>provided</scope>
     </dependency>
   </dependencies>
 
