@@ -8,9 +8,8 @@ import java.util.stream.Collectors;
 
 import chatbot.teamcity.Loggers;
 import chatbot.teamcity.model.UserKey;
-import chatbot.teamcity.model.UserMappingProperties;
+import chatbot.teamcity.settings.UserMappingProperties;
 import chatbot.teamcity.web.bean.ChatUserMappingBean;
-import jetbrains.buildServer.users.PluginPropertyKey;
 import jetbrains.buildServer.users.PropertyKey;
 import jetbrains.buildServer.users.SUser;
 import jetbrains.buildServer.users.UserModel;
@@ -73,15 +72,18 @@ public class UserMappingRepositoryImpl implements UserMappingRepository {
 	public Map<SUser, List<ChatUserMappingBean>> getAllUsersWithMappings() {
 		Map<SUser, List<ChatUserMappingBean>> userProperties = new HashMap<>();
 		for (SUser sUser : userModel.getAllUsers().getUsers()) {
+			
+			// Find only the Properties that are for our plugin with the mapping prefix (not the reason prefix).
 			Map<PropertyKey, String> ourProperties = sUser.getProperties().entrySet().stream()
 											.filter(e -> e.getKey().getKey().contains(UserMappingProperties.getMappingPropertyKeySuffix()))
 											.collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue()));
 			if (! ourProperties.isEmpty()) {
 				List<ChatUserMappingBean> beans = new ArrayList<>();
 				ourProperties.forEach((p,s) -> {
-					PropertyKey key = new PluginPropertyKey(p.getKey().replace(UserMappingProperties.getMappingPropertyKeySuffix(), UserMappingProperties.getMappingReasonPropertyKeySuffix()));
-					String reason = sUser.getPropertyValue(key);
-					beans.add(new ChatUserMappingBean(UserMappingProperties.getUserKey(p), reason));
+					UserKey userKey = UserMappingProperties.getUserKey(p);
+					// Use the mapping value to determine the reason prefix
+					String reason = UserMappingProperties.getMappingReason(userKey, ourProperties);
+					beans.add(new ChatUserMappingBean(userKey, reason));
 				});
 				userProperties.put(sUser, beans);
 			}
