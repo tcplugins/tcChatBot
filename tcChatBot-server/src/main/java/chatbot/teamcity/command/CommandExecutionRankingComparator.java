@@ -7,7 +7,7 @@ public class CommandExecutionRankingComparator  implements Comparator<CommandExe
 	public int compare(CommandExecutor command1, CommandExecutor command2) {
 		if (command1.getExecutionOrder() > command2.getExecutionOrder()){
 			return -1;
-		} else if (command1.getExecutionOrder() < command1.getExecutionOrder()){
+		} else if (command1.getExecutionOrder() < command2.getExecutionOrder()){
 			return 1;
 		} else {
 			return 0;
