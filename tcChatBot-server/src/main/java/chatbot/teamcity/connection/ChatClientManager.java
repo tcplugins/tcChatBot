@@ -15,5 +15,6 @@ public interface ChatClientManager {
 	public ChatClient createChatClientInstance(ChatClientConfig config, MessageReceiver messageReceiver);
 	public void shutdownAllClients();
 	public ChatClient findChatInstanceForConfigId(String chatClientConfigId);
+	public String getChatClientTypeName(String chatClientType);
 	
 }

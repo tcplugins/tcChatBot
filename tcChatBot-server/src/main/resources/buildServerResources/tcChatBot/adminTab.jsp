@@ -52,7 +52,7 @@
 								<c:forEach items="${mapping.clients}" var="bot">
 									<tr>
 									<td><c:out value="${bot.configId}"/></td>
-									<td><c:out value="${bot.messengerTypeName}"/></td>
+									<td><c:out value="${bot.chatClientType}"/></td>
 									<td><c:out value="${bot.configId}"/></td>
 									</tr>
 								
@@ -67,5 +67,31 @@
 	                </c:otherwise>
 	            </c:choose>
 	        </div>
-	
+	        <div class="userMappings">
+	        	<h2>ChatBot to User Mappings</h2>
+	            <c:choose>
+	                <c:when test="${fn:length(chatUsers) > 0}">
+	                    <table class="repoTable settings">
+	                        <tr>
+	                            <th class="name" colspan="4">Mappings</th>
+	                        </tr>
+	                        <c:forEach items="${chatUsers}" var="mapping">	 
+	                        <tr>
+	                        	<td colspan="4">${mapping.key.name} (${mapping.key.username})
+	                        </tr>
+	                        	<c:forEach var="info" items="${mapping.value}">
+							        <tr>
+							        	<td>${info.chatClientName}</td>
+							        	<td>${info.userKey.chatClientGroup}</td>
+							        	<td>${info.userKey.chatUserName}</td>
+							        	<td>${info.reason}</td>
+							        </tr>
+								</c:forEach>
+	                        </c:forEach>
+	                	</table>
+	                </c:when>
+	            <c:otherwise>
+	            </c:otherwise>
+	            </c:choose>
+			</div>
 	</div>

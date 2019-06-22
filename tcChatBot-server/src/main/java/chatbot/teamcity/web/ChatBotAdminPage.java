@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import chatbot.teamcity.connection.ChatClientManager;
 import chatbot.teamcity.service.ChatClientConfigManager;
+import chatbot.teamcity.service.UserMappingRepository;
 import chatbot.teamcity.web.ChatBotConfigMapping.ChatBotConfigMappingBuilder;
 import jetbrains.buildServer.controllers.admin.AdminPage;
 import jetbrains.buildServer.serverSide.auth.Permission;
@@ -21,15 +22,18 @@ public class ChatBotAdminPage extends AdminPage {
 	public static final String TC_CHAT_BOT_ADMIN_ID = "tcChatBot";
 	private final ChatClientManager myChatClientManager;
 	private final ChatClientConfigManager myChatClientConfigManager;
+	private final UserMappingRepository myUserMappingRepository;
 
 	public ChatBotAdminPage(@NotNull PagePlaces pagePlaces, 
 								  @NotNull PluginDescriptor descriptor,
 								  @NotNull ChatClientManager chatClientManager,
-								  @NotNull ChatClientConfigManager chatClientConfigManager
+								  @NotNull ChatClientConfigManager chatClientConfigManager,
+								  @NotNull UserMappingRepository userMappingRepository
 								  ) {
 		super(pagePlaces);
 		this.myChatClientManager = chatClientManager;
 		this.myChatClientConfigManager = chatClientConfigManager;
+		this.myUserMappingRepository = userMappingRepository;
 		setPluginName(TC_CHAT_BOT_ADMIN_ID);
 		setIncludeUrl(descriptor.getPluginResourcesPath("tcChatBot/adminTab.jsp"));
 		setTabTitle("Chat Bots");
@@ -52,6 +56,7 @@ public class ChatBotAdminPage extends AdminPage {
 		
 		List<ChatBotConfigMapping> configAndBots = new ArrayList<>();
 		
+		
 		myChatClientConfigManager.getAllConfigs().forEach( config -> {
 			ChatBotConfigMappingBuilder builder = ChatBotConfigMapping.builder().config(config);
 			myChatClientManager.getAllChatClientInstances().forEach( bot -> {
@@ -63,6 +68,7 @@ public class ChatBotAdminPage extends AdminPage {
 		});
 		
 		model.put("chatBots", configAndBots);
+		model.put("chatUsers", myUserMappingRepository.getAllUsersWithMappings());
 	}
 	
 }

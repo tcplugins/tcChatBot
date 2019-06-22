@@ -1,14 +1,16 @@
-package chatbot.teamcity.service;
+package chatbot.teamcity.settings.user;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import chatbot.teamcity.Loggers;
+import chatbot.teamcity.connection.ChatClientManager;
 import chatbot.teamcity.model.UserKey;
-import chatbot.teamcity.settings.UserMappingProperties;
+import chatbot.teamcity.service.UserMappingRepository;
 import chatbot.teamcity.web.bean.ChatUserMappingBean;
 import jetbrains.buildServer.users.PropertyKey;
 import jetbrains.buildServer.users.SUser;
@@ -21,9 +23,11 @@ import jetbrains.buildServer.users.UserModel;
 public class UserMappingRepositoryImpl implements UserMappingRepository {
 
 	private final UserModel userModel;
+	private final ChatClientManager chatClientManager;
 
-	public UserMappingRepositoryImpl(UserModel userModel) {
+	public UserMappingRepositoryImpl(UserModel userModel, ChatClientManager chatClientManager) {
 		this.userModel = userModel;
+		this.chatClientManager = chatClientManager;
 	}
 	
 	@Override
@@ -82,10 +86,17 @@ public class UserMappingRepositoryImpl implements UserMappingRepository {
 				ourProperties.forEach((p,s) -> {
 					UserKey userKey = UserMappingProperties.getUserKey(p);
 					// Use the mapping value to determine the reason prefix
-					String reason = UserMappingProperties.getMappingReason(userKey, ourProperties);
-					beans.add(new ChatUserMappingBean(userKey, reason));
+					if (Objects.nonNull(userKey)) {
+						String reason = UserMappingProperties.getMappingReason(userKey, ourProperties);
+						beans.add(new ChatUserMappingBean(
+								this.chatClientManager.getChatClientTypeName(userKey.getChatClientType()),
+								userKey, 
+								reason));
+					}
 				});
-				userProperties.put(sUser, beans);
+				if (! beans.isEmpty()) {
+					userProperties.put(sUser, beans);
+				}
 			}
 		}
 		return userProperties;

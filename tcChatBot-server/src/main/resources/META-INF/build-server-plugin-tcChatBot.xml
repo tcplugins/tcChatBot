@@ -20,9 +20,16 @@
        <bean
        		class='chatbot.teamcity.web.ChatBotAdminPage'/>
        		
+       	<bean 
+       		class='chatbot.teamcity.web.ChatBotProjectSettingsTab'/>
+       		
        <bean
        		id='chatService' 
        		class='chatbot.teamcity.service.ChatServiceImpl'/>
+       		
+       <bean
+       		id='teamCityCoreFacade' 
+       		class='chatbot.teamcity.service.TeamCityCoreFacadeImpl'/>
        		
        <bean 
        		id='buildService'
@@ -43,11 +50,11 @@
        		       		       
        	<bean 
        		id='userService'
-       		class='chatbot.teamcity.service.UserServiceImpl'/>   
+       		class='chatbot.teamcity.service.UserServiceImpl'/>
        		       		       
        	<bean 
        		id='userMappingRepository'
-       		class='chatbot.teamcity.service.UserMappingRepositoryImpl'/>
+       		class='chatbot.teamcity.settings.user.UserMappingRepositoryImpl'/>
        				       
        	<bean 
        		id='chatClientManager'
@@ -56,6 +63,10 @@
        	<bean 
        		id='chatClientConfigManager'
        		class='chatbot.teamcity.service.ChatClientConfigManagerImpl'/>
+       		
+       	<bean 
+       		id='chatClientConfigStorage'
+       		class='chatbot.teamcity.settings.project.ChatClientConfigStorage'/>
 
        	<bean class='chatbot.teamcity.connection.client.slack.SlackChatClientFactory'/>
        	<bean class='chatbot.teamcity.connection.client.slack.SlackUserService'/>

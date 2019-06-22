@@ -1,4 +1,4 @@
-package chatbot.teamcity.settings;
+package chatbot.teamcity.settings.user;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -57,6 +57,6 @@ public class UserMappingProperties {
 	
 	@Nullable
 	public static String getMappingReason(UserKey userKey, Map<PropertyKey, String> userProperties) {
-			return userProperties.getOrDefault(getMappingReasonPropertyKey(userKey), null);
+			return userProperties.getOrDefault(getMappingReasonPropertyKey(userKey), "Unknown reason");
 	}
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 import org.junit.Test;
 
 import chatbot.teamcity.model.UserKey;
+import chatbot.teamcity.settings.user.UserMappingProperties;
 import jetbrains.buildServer.users.PluginPropertyKey;
 import jetbrains.buildServer.users.PropertyKey;
 

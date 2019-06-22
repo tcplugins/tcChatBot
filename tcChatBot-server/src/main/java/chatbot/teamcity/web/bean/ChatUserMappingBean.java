@@ -11,6 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ChatUserMappingBean {
+	String chatClientName;
 	UserKey userKey;
 	String reason;
 }

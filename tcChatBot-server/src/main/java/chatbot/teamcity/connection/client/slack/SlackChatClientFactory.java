@@ -11,7 +11,12 @@ import chatbot.teamcity.service.MessageReceiver;
 import chatbot.teamcity.service.UserService;
 
 public class SlackChatClientFactory implements ChatClientFactory {
+	
+	private static final String TOKEN_KEY = ChatClientConfig.SECURE_PROPERTY_PREFIX + "token";
+	private static final String KEYWORD_KEY = "keyword";
 
+	
+	private static final String[] CONFIG_KEYS_LIST = { TOKEN_KEY, KEYWORD_KEY };
 	private final UserService userService;
 	private final SlackUserService slackUserService;
 	
@@ -23,12 +28,12 @@ public class SlackChatClientFactory implements ChatClientFactory {
 	
 	@Override
 	public ChatClient createChatClient(ChatClientConfig config, MessageReceiver messageReceiver) {
-		if (config.getProperties().containsKey("token")) {
+		if (config.getProperties().containsKey(TOKEN_KEY)) {
 			SlackChatClient client = new SlackChatClient(
 					config.getConfigId(),
 					UUID.randomUUID().toString(),
-					config.getProperties().get("token"),
-					config.getProperties().get("keyword"),
+					config.getProperties().get(TOKEN_KEY),
+					config.getProperties().get(KEYWORD_KEY),
 					messageReceiver,
 					this.userService,
 					this.slackUserService,
@@ -44,5 +49,14 @@ public class SlackChatClientFactory implements ChatClientFactory {
 		return "slack";
 	}
 
+	@Override
+	public String getChatClientTypeName() {
+		return "Slack";
+	}
+
+	@Override
+	public String[] getExtraConfigKeys() {
+		return CONFIG_KEYS_LIST;
+	}
 
 }

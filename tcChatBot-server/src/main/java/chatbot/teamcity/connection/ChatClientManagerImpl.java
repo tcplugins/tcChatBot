@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
@@ -61,5 +62,13 @@ public class ChatClientManagerImpl implements ChatClientManager {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public String getChatClientTypeName(String chatClientType) {
+		if (Objects.nonNull(this.factories.get(chatClientType))) {
+			return this.factories.get(chatClientType).getChatClientTypeName();
+		}
+		return chatClientType;
 	}
 }
