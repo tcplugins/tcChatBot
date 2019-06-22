@@ -23,6 +23,12 @@
        	<bean 
        		class='chatbot.teamcity.web.ChatBotProjectSettingsTab'/>
        		
+       	<bean 
+       		class='chatbot.teamcity.web.ChatBotConfigurationEditPageActionController'/>
+       		
+       	<bean 
+       		class='chatbot.teamcity.web.action.AddChatClientConfigAction'/>
+       		
        <bean
        		id='chatService' 
        		class='chatbot.teamcity.service.ChatServiceImpl'/>

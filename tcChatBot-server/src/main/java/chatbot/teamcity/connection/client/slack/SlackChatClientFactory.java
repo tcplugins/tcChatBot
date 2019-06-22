@@ -12,8 +12,8 @@ import chatbot.teamcity.service.UserService;
 
 public class SlackChatClientFactory implements ChatClientFactory {
 	
-	private static final String TOKEN_KEY = ChatClientConfig.SECURE_PROPERTY_PREFIX + "token";
-	private static final String KEYWORD_KEY = "keyword";
+	public static final String TOKEN_KEY = ChatClientConfig.SECURE_PROPERTY_PREFIX + "token";
+	public static final String KEYWORD_KEY = "keyword";
 
 	
 	private static final String[] CONFIG_KEYS_LIST = { TOKEN_KEY, KEYWORD_KEY };

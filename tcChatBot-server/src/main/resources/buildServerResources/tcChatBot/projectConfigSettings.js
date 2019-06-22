@@ -1,19 +1,24 @@
 
 ChatBotPlugin = {
-   addDebRepo: function(projectId) {
-    	DebRepoPlugin.AddRepoDialog.showDialog("Add Debian Repository", 'addDebRepo', {uuid: '', name: '', projectId: projectId});
+   addChatBot: function(projectId) {
+    	ChatBotPlugin.AddChatBotDialog.showDialog("Add Chat Bot", 'addChatBot', {id: '', name: '', projectId: projectId});
     },
-    AddRepoDialog: OO.extend(BS.AbstractWebForm, OO.extend(BS.AbstractModalDialog, {
+    editChatBot: function(data) {
+    	console.log(data);
+    	alert (data);
+    	ChatBotPlugin.AddChatBotDialog.showDialog("Edit Chat Bot", 'editChatBot', data );
+    },
+    AddChatBotDialog: OO.extend(BS.AbstractWebForm, OO.extend(BS.AbstractModalDialog, {
         getContainer: function () {
-            return $('addRepoDialog');
+            return $('addChatBotDialog');
         },
 
         formElement: function () {
-            return $('addRepoForm');
+            return $('addChatBotForm');
         },
 
         showDialog: function (title, action, data) {
-            $j("input[id='DebRepoaction']").val(action);
+            $j("input[id='ChatBotaction']").val(action);
             $j(".dialogTitle").val(title);
             this.cleanFields(data);
             this.cleanErrors();
@@ -21,14 +26,15 @@ ChatBotPlugin = {
         },
 
         cleanFields: function (data) {
-            $j(".runnerFormTable input[id='debrepo.name']").val(data.name);
-            $j("#addRepoForm input[id='projectId']").val(data.projectId);
+            $j(".runnerFormTable input[id='chatbot.name']").val(data.name);
+            $j(".runnerFormTable input[id='chatbot.id']").val(data.id);
+            $j("#addChatBotForm input[id='projectId']").val(data.projectId);
 
             this.cleanErrors();
         },
 
         cleanErrors: function () {
-            $j("#addRepoForm .error").remove();
+            $j("#addChatBotForm .error").remove();
         },
 
         error: function($element, message) {
@@ -52,12 +58,11 @@ ChatBotPlugin = {
         doValidate: function() {
             var errorFound = false;
 
-            var name = $j('input[id="debrepo.name"]');
+            var name = $j('input[id="chatbot.name"]');
             if (name.val() == "") {
-                this.error(name, "Please set the repository name");
+                this.error(name, "Please set the Chat Bot name");
                 errorFound = true;
             }
-
             return !errorFound;
         },
 
@@ -69,14 +74,18 @@ ChatBotPlugin = {
             }
 
             var parameters = {
-                "debrepo.name": $j(".runnerFormTable input[id='debrepo.name']").val(),
-                "debrepo.project.id": $j("#addRepoForm #projectId").val(),
-                action: $j("#addRepoForm #DebRepoaction").val()
+                "chatbot.type": $j(".runnerFormTable input[id='chatbot.type']").val(),
+                "chatbot.name": $j(".runnerFormTable input[id='chatbot.name']").val(),
+                "chatbot.secure:token": $j(".runnerFormTable input[id='chatbot.secure:token']").val(),
+                "chatbot.keyword": $j(".runnerFormTable input[id='chatbot.keyword']").val(),
+                "chatbot.emailAutoMappingEnabled": $j(".runnerFormTable input[id='chatbot.emailAutoMappingEnabled']").val(),
+                "projectId": $j("#addChatBotForm #projectId").val(),
+                action: $j("#addChatBotForm #ChatBotaction").val()
             };
 
              var dialog = this;
 
-     		 BS.ajaxRequest(window['base_uri'] + '/admin/debianRepositoryAction.html', {
+     		 BS.ajaxRequest(window['base_uri'] + '/admin/chatBotAction.html', {
     			parameters: parameters,
     			onComplete: function(transport) {
     				var shouldClose = true;
@@ -100,12 +109,9 @@ ChatBotPlugin = {
     						}
     					}
     				}
-    				if (shouldRedirect) {
+    				if (shouldClose) {
     					dialog.close();
-    					window.location = window['base_uri'] + '/admin/editDebianRepository.html?repo=' + $j("#addRepoForm input[id='debrepo.name']").val()
-    				} else if (shouldClose) {
-    					dialog.close();
-    					$("DebRepos").refresh();
+    					$("chatBots").refresh();
     				}
 
     			}
