@@ -73,7 +73,6 @@
                              onsubmit="return ChatBotPlugin.AddChatBotDialog.doPost();">
 
             <table class="runnerFormTable">
-            	<input type="hidden" id="chatbot.type" name="chatbot.type" value="slack"/>
                 <tr>
                     <th>Name<l:star/></th>
                     <td>
@@ -84,7 +83,7 @@
                 <tr>
                     <th>Slack Token<l:star/></th>
                     <td>
-                        <div><input type="text" size="40" maxlength="256" id="chatbot.secure:token" name="chatbot.secure:token"/></div>
+                        <div><input type="text" size="40" maxlength="256" id="chatbot.secure_token" name="chatbot.secure_token"/></div>
                         <div>Slack token from the Slack bot creation page.</div>
                     </td>
                 </tr>
@@ -107,11 +106,12 @@
                     </td>
                 </tr>
                 <div id="ajaxResult"></div>
+            	<input type="hidden" id="chatbot.type" name="chatbot.type" value="slack"/>
+	            <input type="hidden" id="chatbot.id" name="chatbot.id"/>
+	            <input type="hidden" name="action" id="ChatBotaction" value="addChatBot"/>
+	            <input type="hidden" name="projectId" id="projectId" value="${projectId}"/>
             </table>
             
-            <input type="hidden" id="chatbot.id" name="chatbot.id"/>
-            <input type="hidden" name="action" id="ChatBotaction" value="addChatBot"/>
-            <input type="hidden" name="projectId" id="projectId" value="${projectId}"/>
             <div class="popupSaveButtonsBlock">
                 <forms:submit id="addChatBotDialogSubmit" label="Add Chat Bot"/>
                 <forms:cancel onclick="ChatBotPlugin.AddChatBotDialog.close()"/>

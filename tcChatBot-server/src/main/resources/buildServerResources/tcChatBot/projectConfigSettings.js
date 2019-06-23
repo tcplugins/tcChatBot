@@ -26,9 +26,13 @@ ChatBotPlugin = {
         },
 
         cleanFields: function (data) {
-            $j(".runnerFormTable input[id='chatbot.name']").val(data.name);
-            $j(".runnerFormTable input[id='chatbot.id']").val(data.id);
-            $j("#addChatBotForm input[id='projectId']").val(data.projectId);
+            $j(".runnerFormTable input[id='chatbot.id']").val(data.config.confgId);
+            $j(".runnerFormTable input[id='chatbot.type']").val(data.config.type);
+            $j(".runnerFormTable input[id='chatbot.name']").val(data.config.name);
+            $j(".runnerFormTable input[id='chatbot.keyword']").val(data.config.keyword);
+            $j(".runnerFormTable input[id='chatbot.secure_token']").val(data.config.secure_token);
+            $j(".runnerFormTable input[id='chatbot.emailAutoMappingEnabled']").val(data.config.emailAutoMappingEnabled);
+            $j(".runnerFormTable input[id='projectId']").val(data.projectId);
 
             this.cleanErrors();
         },
@@ -72,15 +76,16 @@ ChatBotPlugin = {
             if (!this.doValidate()) {
                 return false;
             }
-
+            // TODO: This should probably be a jquery.each() to find the values.
+            //       V1.0 only supports Slack, so this can be hard-coded for now.
             var parameters = {
                 "chatbot.type": $j(".runnerFormTable input[id='chatbot.type']").val(),
                 "chatbot.name": $j(".runnerFormTable input[id='chatbot.name']").val(),
-                "chatbot.secure:token": $j(".runnerFormTable input[id='chatbot.secure:token']").val(),
+                "chatbot.secure_token": $j(".runnerFormTable input[id='chatbot.secure_token']").val(),
                 "chatbot.keyword": $j(".runnerFormTable input[id='chatbot.keyword']").val(),
                 "chatbot.emailAutoMappingEnabled": $j(".runnerFormTable input[id='chatbot.emailAutoMappingEnabled']").val(),
                 "projectId": $j("#addChatBotForm #projectId").val(),
-                action: $j("#addChatBotForm #ChatBotaction").val()
+                action: $j(".runnerFormTable input[id='ChatBotaction']").val()
             };
 
              var dialog = this;

@@ -34,13 +34,13 @@ import jetbrains.buildServer.serverSide.ProjectManager;
 import jetbrains.buildServer.serverSide.SProject;
 import jetbrains.buildServer.web.openapi.ControllerAction;
 
-public class AddChatClientConfigAction extends ChatClientConfigAction implements ControllerAction {
+public class EditChatClientConfigAction extends ChatClientConfigAction implements ControllerAction {
 
 	private final ProjectManager myProjectManager;
 	private final ChatClientConfigManager myChatClientConfigManager;
-	private final static String ADD_CHATBOT_ACTION = "addChatBot";
+	private final static String EDIT_CHATBOT_ACTION = "editChatBot";
 
-	public AddChatClientConfigAction(@NotNull ProjectManager projectManager,
+	public EditChatClientConfigAction(@NotNull ProjectManager projectManager,
 							   		 @NotNull final ChatClientConfigManager chatClientConfigManager,
 							   		 @NotNull final ChatBotConfigurationEditPageActionController controller) {
 
@@ -52,7 +52,7 @@ public class AddChatClientConfigAction extends ChatClientConfigAction implements
 	
 	@Override
 	public String getChatClientConfigAction() {
-		return ADD_CHATBOT_ACTION;
+		return EDIT_CHATBOT_ACTION;
 	}
 
 	public void process(@NotNull final HttpServletRequest request, @NotNull final HttpServletResponse response,

@@ -28,6 +28,8 @@
        		
        	<bean 
        		class='chatbot.teamcity.web.action.AddChatClientConfigAction'/>
+       	<bean 
+       		class='chatbot.teamcity.web.action.EditChatClientConfigAction'/>
        		
        <bean
        		id='chatService' 

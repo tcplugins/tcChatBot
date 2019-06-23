@@ -33,7 +33,7 @@ public class ChatBotConfigurationEditPageActionController extends BaseAjaxAction
 	public static final String ACTION_TYPE = "action";
     public static final String CONFIG_ID = "chatbot.id";
     public static final String CONFIG_NAME = "chatbot.name";
-    public static final String CONFIG_TOKEN = "chatbot.secure:token";
+    public static final String CONFIG_TOKEN = "chatbot.secure_token";
     public static final String CONFIG_KEYWORD = "chatbot.keyword";
     public static final String CONFIG_EMAIL = "chatbot.emailAutoMappingEnabled";
     public static final String CONFIG_TYPE = "chatbot.type";

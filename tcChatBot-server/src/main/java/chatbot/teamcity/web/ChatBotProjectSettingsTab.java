@@ -91,7 +91,7 @@ public class ChatBotProjectSettingsTab extends EditProjectTab {
     	
     	public ChatClientConfigWrapperBean(ChatClientConfig chatClientConfig) {
     		this.config = chatClientConfig;
-    		this.json = ChatClientConfigFactory.toJson(chatClientConfig);
+    		this.json = ChatClientConfigFactory.toJson(chatClientConfig).replaceAll("secure:", "secure_");
 		}
     }
 }
