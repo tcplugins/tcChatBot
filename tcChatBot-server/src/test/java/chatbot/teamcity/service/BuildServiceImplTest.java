@@ -3,6 +3,7 @@ package chatbot.teamcity.service;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -29,8 +30,22 @@ public class BuildServiceImplTest {
 	@Test
 	public void testFindPermissionedProjects() {
 		MockitoAnnotations.initMocks(this);
-		setupProjects();
+		List<SProject> projectList = setupProjects();
 		when(sUser.getProjectsPermissions()).thenReturn(getProjectsPermissions());
+		when(sUser.getGlobalPermissions()).thenReturn(getProjectsPermissions().get("p1"));
+		when(projectManager.getActiveProjects()).thenReturn(projectList);
+		BuildService buildService = new BuildServiceImpl(projectManager);
+		List<SProject> projects  = buildService.findPermissionedProjects(sUser, "Project", new Permissions(Permission.VIEW_PROJECT));
+		assertEquals(3, projects.size());
+	}
+	
+	@Test
+	public void testFindPermissionedProjects2() {
+		MockitoAnnotations.initMocks(this);
+		List<SProject> projectList = setupProjects();
+		when(sUser.getProjectsPermissions()).thenReturn(getProjectsPermissions());
+		when(sUser.getGlobalPermissions()).thenReturn(getProjectsPermissions().get("p2"));
+		when(projectManager.getActiveProjects()).thenReturn(projectList);
 		BuildService buildService = new BuildServiceImpl(projectManager);
 		List<SProject> projects  = buildService.findPermissionedProjects(sUser, "Project", new Permissions(Permission.VIEW_PROJECT));
 		assertEquals(2, projects.size());
@@ -44,14 +59,17 @@ public class BuildServiceImplTest {
 		return projectsPermissions;
 	}
 	
-	private void setupProjects() {
+	private List<SProject> setupProjects() {
+		List<SProject> projList = new ArrayList<>();
 		Arrays.asList("p1", "p2", "p3").forEach(name -> {
 			SProject p = mock(SProject.class);
 			when(p.getProjectId()).thenReturn(name);
 			when(p.getName()).thenReturn("Project Name " + name);
 			when(p.getExternalId()).thenReturn(name);
 			when(projectManager.findProjectById(name)).thenReturn(p);
+			projList.add(p);
 		});
+		return projList;
 	}
 
 }

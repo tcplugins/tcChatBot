@@ -13,5 +13,7 @@ public interface ChatClientConfigManager {
 		public List<ChatClientConfig> getConfigurationsForProject(SProject project);
 		public void deleteConfig(SProject sProject, String configId);
 		public void updateConfig(ChatClientConfig config, String description); 
+		public String getChatClientStatus(String clientConfigId);
+		public void setChatClientStatus(String clientConfigId, String message);
 		
 }

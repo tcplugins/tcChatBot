@@ -15,6 +15,7 @@ import jetbrains.buildServer.serverSide.SProject;
 public class ChatClientConfigManagerImpl implements ChatClientConfigManager {
 	
 	private ChatClientConfigStorage myChatClientConfigStorage;
+	private Map<String,String> clientStatus = new HashMap<>();
 
 	public ChatClientConfigManagerImpl(@NotNull ChatClientConfigStorage chatClientConfigStorage) {
 		myChatClientConfigStorage = chatClientConfigStorage;
@@ -49,6 +50,16 @@ public class ChatClientConfigManagerImpl implements ChatClientConfigManager {
 	@Override
 	public List<ChatClientConfig> getConfigurationsForProject(SProject project) {
 		return myChatClientConfigStorage.getChatClientConfigs(project);
+	}
+	
+	@Override
+	public String getChatClientStatus(String clientConfigId) {
+		return this.clientStatus.getOrDefault(clientConfigId, "");
+	}
+
+	@Override
+	public void setChatClientStatus(String clientConfigId, String message) {
+		this.clientStatus.put(clientConfigId, message);
 	}
 
 }

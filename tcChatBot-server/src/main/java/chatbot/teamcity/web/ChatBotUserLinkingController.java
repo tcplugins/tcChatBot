@@ -1,5 +1,6 @@
 package chatbot.teamcity.web;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import chatbot.teamcity.connection.ChatClient;
 import chatbot.teamcity.connection.ChatClientManager;
+import chatbot.teamcity.exception.UserNotFoundException;
 import chatbot.teamcity.model.Response;
 import chatbot.teamcity.model.ValidationHolder;
 import chatbot.teamcity.service.UserService;
@@ -42,18 +44,28 @@ public class ChatBotUserLinkingController extends BaseController {
 	protected ModelAndView doHandle(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		final String uuid = request.getParameter("token");
 		final SUser user = SessionUser.getUser(request);
+		ModelAndView mv = new ModelAndView(myPluginDescriptor.getPluginResourcesPath("tcChatBot/linkUser.jsp"));
+		mv.getModel().put("sUser", user);
 		if (uuid != null) {
-			ValidationHolder holder = myUserService.validateUser(UUID.fromString(uuid), user);
-			ChatClient client = myChatClientManager.findChatInstanceForConfigId(holder.getChatClientConfigId());
-			if (client != null) {
-				Response message = new Response();
-				message.setBundle(client.createBundle(holder.getUserKey()));
-				message.setMessenger(client);
-				message.setMessage("Thanks. Your teamcity account has been linked.");
-				client.respond(message);
+			try {
+				ValidationHolder holder = myUserService.validateUser(UUID.fromString(uuid), user);
+				mv.getModel().put("validation", holder);
+				ChatClient client = myChatClientManager.findChatInstanceForConfigId(holder.getChatClientConfigId());
+				if (Objects.nonNull(client)) {
+					Response message = new Response();
+					message.setBundle(client.createBundle(holder.getUserKey()));
+					message.setMessenger(client);
+					message.setMessage("Thanks. Your teamcity account has been linked.");
+					client.respond(message);
+				}
+			} catch (UserNotFoundException userNotFoundEx) {
+				mv.getModel().put("error", userNotFoundEx.getMessage());
+			} catch (IllegalArgumentException ex) {
+				mv.getModel().put("error", "Sorry, that looks like an invalid token. I could not link your account.");
 			}
+		} else {
+			mv.getModel().put("error", "No token found. Sorry I could not link your accounts.");
 		}
-		return null;
+		return mv;
 	}
-
 }

@@ -30,6 +30,12 @@
        		class='chatbot.teamcity.web.action.AddChatClientConfigAction'/>
        	<bean 
        		class='chatbot.teamcity.web.action.EditChatClientConfigAction'/>
+       	<bean 
+       		class='chatbot.teamcity.web.action.DeleteChatClientConfigAction'/>
+       	<bean 
+       		class='chatbot.teamcity.web.action.RestartChatClientConfigAction'/>
+       	<bean 
+       		class='chatbot.teamcity.web.action.UnlinkUserConfigAction'/>
        		
        <bean
        		id='chatService' 

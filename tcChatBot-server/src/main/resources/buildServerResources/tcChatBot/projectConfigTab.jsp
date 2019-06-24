@@ -18,16 +18,15 @@
     </c:if>
 
     <bs:refreshable containerId="chatBots" pageUrl="${pageUrl}">
+    	<bs:messages key="chatBotInfoUpdateResult"/>
         <div class="repoList">
             <c:choose>
                 <c:when test="${fn:length(chatConfigs) > 0}">
-                    <table class="repoTable parametersTable">
+                    <table class="repoTable parametersTable filterTable">
                         <tr>
                             <th class="name" width="25%">Type</th>
                             <th class="name" width="50%">Name</th>
-                            <c:if test="${userHasPermissionManagement}">
-                                <th class="actions" colspan="3" width="25%">Actions</th>
-                            </c:if>
+                            <th class="actions" colspan="3" width="25%">Actions</th>
                         </tr>
                         <c:forEach items="${chatConfigs}" var="item">
                                 <tr class="chatBotInfo">
@@ -35,14 +34,14 @@
                                 	<td><c:out value="${item.config.name}"/></td>
                                     <c:if test="${userHasPermissionManagement && afn:permissionGrantedForProject(sProject, 'EDIT_PROJECT')}">
                                     
-                                        <td class="edit">
+                                        <td class="edit" rowspan=2>
                                             <a href="#" onclick='ChatBotPlugin.editChatBot({ "config": <c:out value="${item.json}" />, "projectId": "${projectExternalId}" }); return false'>edit</a>
                                         </td>
-                                       <td class="edit">
-                                            <a href="#" onclick="ChatBotPlugin.deleteChatBot({ "config": <c:out value="${item.json}" />, "projectId": "${projectExternalId}" }); return false">delete</a>
+                                       <td class="edit" rowspan=2>
+                                            <a href="#" onclick='ChatBotPlugin.deleteChatBot({ "config": <c:out value="${item.json}" />, "projectId": "${projectExternalId}" }); return false'>delete</a>
                                         </td>
-                                        <td class="edit">
-                                            <a href="#" onclick="ChatBotPlugin.restartChatBot({ "config": <c:out value="${item.json}" />, "projectId": "${projectExternalId}" }); return false">restart</a>
+                                        <td class="edit" rowspan=2>
+                                            <a href="#" onclick='ChatBotPlugin.restartChatBot({ "config": <c:out value="${item.json}" />, "projectId": "${projectExternalId}" }); return false'>restart</a>
                                         </td>
                                         
                                      </c:if>
@@ -51,6 +50,8 @@
                                         </td>
                                     </c:if>
                                 </tr>
+                                <tr><td colspan=2><b>Status:</b> <c:out value="${item.status}"/></td></tr>
+                                <tr class="blankline"><td colspan=5 class="blankline">&nbsp</td></tr>
                         </c:forEach>
                     </table>
                 </c:when>
@@ -62,62 +63,6 @@
             </c:choose>
         </div>
     </bs:refreshable>
-
-    <bs:dialog dialogId="addChatBotDialog"
-               dialogClass="addConfigDialog"
-               title="Add Chat Bot"
-               closeCommand="ChatBotPlugin.AddChatBotDialog.close()">
-        <forms:multipartForm id="addChatBotForm"
-                             action="/admin/chatBotAction.html"
-                             targetIframe="hidden-iframe"
-                             onsubmit="return ChatBotPlugin.AddChatBotDialog.doPost();">
-
-            <table class="runnerFormTable">
-                <tr>
-                    <th>Name<l:star/></th>
-                    <td>
-                        <div><input type="text" size="40" maxlength="256" id="chatbot.name" name="chatbot.name"/></div>
-                        <div>A name for this ChatBot. eg, <i>Slack Bot for Dev channels</i>.</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Slack Token<l:star/></th>
-                    <td>
-                        <div><input type="text" size="40" maxlength="256" id="chatbot.secure_token" name="chatbot.secure_token"/></div>
-                        <div>Slack token from the Slack bot creation page.</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Command Keyword<l:star/></th>
-                    <td>
-                        <div><input type="text" id="chatbot.keyword" name="chatbot.keyword"/></div>
-                        <div><p>Command keyword to which ChatBot responds. Must be the first word in a message for the ChatBot to respond. </p>
-                        	 <p>eg, a keyword of <i>teamcity</i> would ensure ChatBot responds to commands like: <i>teamcity list projects</i></div>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Auto-map by Email Address</th>
-                    <td>
-                        <div><input type="checkbox" id="chatbot.emailAutoMappingEnabled" name="chatbot.emailAutoMappingEnabled"/></div>
-                        <div><p>Whether to automatically map Slack users to TeamCity users based on matching email addresses.</p> 
-                        	 <p>Otherwise users will be asked to validate their TeamCity account via a link on their first interaction with the ChatBot.</p>
-                        	 <p><b>Note:</b> If users can modify their email address in TeamCity or Slack, this is a security hole.</p>
-                        </div>
-                    </td>
-                </tr>
-                <div id="ajaxResult"></div>
-            	<input type="hidden" id="chatbot.type" name="chatbot.type" value="slack"/>
-	            <input type="hidden" id="chatbot.id" name="chatbot.id"/>
-	            <input type="hidden" name="action" id="ChatBotaction" value="addChatBot"/>
-	            <input type="hidden" name="projectId" id="projectId" value="${projectId}"/>
-            </table>
-            
-            <div class="popupSaveButtonsBlock">
-                <forms:submit id="addChatBotDialogSubmit" label="Add Chat Bot"/>
-                <forms:cancel onclick="ChatBotPlugin.AddChatBotDialog.close()"/>
-            </div>
-        </forms:multipartForm>
-    </bs:dialog>
-
+	<%@ include file="tcChatBotInclude.jsp" %>
 </div>
 	

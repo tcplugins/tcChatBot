@@ -125,5 +125,15 @@ public class UserServiceImpl implements UserService {
 		}
 		throw new UserNotFoundException("No matching user in TeamCity with email address: " + emailAddress);
 	}
+
+
+	@Override
+	public User removeUserMapping(UserKey chatUserKey) {
+		User user = findUser(chatUserKey);
+		SUser sUser = resolveUser(user);
+		userMappingService.deleteMapping(sUser, chatUserKey);
+		users.clear();
+		return user;
+	}
 	
 }

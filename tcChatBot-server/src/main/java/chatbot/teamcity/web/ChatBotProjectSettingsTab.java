@@ -1,6 +1,5 @@
 package chatbot.teamcity.web;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import chatbot.teamcity.connection.ChatClientManager;
 import chatbot.teamcity.model.ChatClientConfig;
 import chatbot.teamcity.service.ChatClientConfigManager;
-import chatbot.teamcity.settings.project.ChatClientConfigFactory;
+import chatbot.teamcity.web.bean.ChatClientConfigWrapperBean;
 import jetbrains.buildServer.controllers.admin.projects.EditProjectTab;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.SProject;
@@ -20,8 +19,6 @@ import jetbrains.buildServer.serverSide.auth.AuthUtil;
 import jetbrains.buildServer.serverSide.auth.SecurityContext;
 import jetbrains.buildServer.web.openapi.PagePlaces;
 import jetbrains.buildServer.web.openapi.PluginDescriptor;
-import lombok.Getter;
-import lombok.Setter;
 
 public class ChatBotProjectSettingsTab extends EditProjectTab {
 	
@@ -71,7 +68,6 @@ public class ChatBotProjectSettingsTab extends EditProjectTab {
         if (currentProject == null) {
             return;
         }
-        //final Map<String, ChatClientConfigWrapperBean> chatConfigs = getConfigsMap(myChatClientConfigManager.getConfigurationsForProject(currentProject));
         model.put("chatConfigs", getConfigs(myChatClientConfigManager.getConfigurationsForProject(currentProject)));
         model.put("sProject", currentProject);
         model.put("projectId", currentProject.getProjectId());
@@ -80,18 +76,11 @@ public class ChatBotProjectSettingsTab extends EditProjectTab {
     }
     
     private List<ChatClientConfigWrapperBean> getConfigs(List<ChatClientConfig> configurationsForProject) {
-    	return configurationsForProject.stream().map(ChatClientConfigWrapperBean::new).collect(Collectors.toList());
+    	return configurationsForProject.stream()
+    								   .map(c -> new ChatClientConfigWrapperBean(
+    										   			c, 
+    										   			this.myChatClientConfigManager.getChatClientStatus(c.getConfigId())))
+    								   .collect(Collectors.toList());
 	}
 
-	@Getter
-    public static class ChatClientConfigWrapperBean {
-    	
-    	final ChatClientConfig config;
-    	final String json;
-    	
-    	public ChatClientConfigWrapperBean(ChatClientConfig chatClientConfig) {
-    		this.config = chatClientConfig;
-    		this.json = ChatClientConfigFactory.toJson(chatClientConfig).replaceAll("secure:", "secure_");
-		}
-    }
 }

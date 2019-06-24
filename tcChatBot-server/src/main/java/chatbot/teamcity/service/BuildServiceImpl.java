@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -49,7 +50,7 @@ public class BuildServiceImpl implements BuildService {
 	public List<SBuildType> findPermissionedBuildTypes(SUser sUser, String searchText, Permissions permissions) {
 
 		
-		Map<String,Permissions> projectPermissions = sUser.getProjectsPermissions();
+		Map<String,Permissions> projectPermissions = getProjectsPermissions(sUser, permissions);
 		
 		/* If the externalID matches exactly, we have a match */
 		SBuildType sBuildType = projectManager.findBuildTypeByExternalId(searchText);
@@ -145,7 +146,7 @@ public class BuildServiceImpl implements BuildService {
 		
 		List<SProject> permissionedProjects = new ArrayList<>();
 		Map<String,SProject> projects = new HashMap<>(); 
-		Map<String,Permissions> projectPermissions = sUser.getProjectsPermissions();
+		Map<String,Permissions> projectPermissions = getProjectsPermissions(sUser, permissions);
 		
 		/* Fetch all the projects once */
 		projectPermissions.forEach((id, perms) -> {
@@ -219,6 +220,14 @@ public class BuildServiceImpl implements BuildService {
 		}		
 
 		return permissionedProjects;
+	}
+
+	private Map<String, Permissions> getProjectsPermissions(SUser sUser, Permissions permissions) {
+		if (sUser.getGlobalPermissions().containsAny(permissions)) {
+			return projectManager.getActiveProjects().stream()
+													 .collect(Collectors.toMap(p -> p.getProjectId(), p-> permissions));
+		}
+		return sUser.getProjectsPermissions();
 	}
 	
 }

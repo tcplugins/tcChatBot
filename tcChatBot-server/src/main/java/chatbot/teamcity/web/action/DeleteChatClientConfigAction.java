@@ -18,6 +18,11 @@
  *******************************************************************************/
 package chatbot.teamcity.web.action;
 
+import static chatbot.teamcity.web.ChatBotConfigurationEditPageActionController.CONFIG_ID;
+import static chatbot.teamcity.web.ChatBotConfigurationEditPageActionController.PROJECT_ID;
+
+import java.util.Objects;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,48 +31,59 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import chatbot.teamcity.exception.ChatClientConfigurationException;
-import chatbot.teamcity.model.ChatClientConfig;
 import chatbot.teamcity.service.ChatClientConfigManager;
+import chatbot.teamcity.service.ChatClientRestarter;
 import chatbot.teamcity.web.ChatBotConfigurationEditPageActionController;
 import jetbrains.buildServer.controllers.ActionMessages;
 import jetbrains.buildServer.serverSide.ProjectManager;
 import jetbrains.buildServer.serverSide.SProject;
 import jetbrains.buildServer.web.openapi.ControllerAction;
 
-public class EditChatClientConfigAction extends ChatClientConfigAction implements ControllerAction {
+public class DeleteChatClientConfigAction extends ChatClientConfigAction implements ControllerAction {
 
 	private final ProjectManager myProjectManager;
+	private final ChatClientRestarter myChatClientRestarter;
 	private final ChatClientConfigManager myChatClientConfigManager;
-	private final static String EDIT_CHATBOT_ACTION = "editChatBot";
+	private final static String CHATBOT_ACTION = "deleteChatBot";
 
-	public EditChatClientConfigAction(@NotNull ProjectManager projectManager,
+	public DeleteChatClientConfigAction(@NotNull ProjectManager projectManager,
+									 @NotNull final ChatClientRestarter chatClientRestarter,
 							   		 @NotNull final ChatClientConfigManager chatClientConfigManager,
 							   		 @NotNull final ChatBotConfigurationEditPageActionController controller) {
 
 		super(projectManager);
 		myProjectManager = projectManager;
+		myChatClientRestarter = chatClientRestarter;
 		myChatClientConfigManager = chatClientConfigManager;
 		controller.registerAction(this);
 	}
 	
 	@Override
 	public String getChatClientConfigAction() {
-		return EDIT_CHATBOT_ACTION;
+		return CHATBOT_ACTION;
 	}
 
 	public void process(@NotNull final HttpServletRequest request, @NotNull final HttpServletResponse response,
 			@Nullable final Element ajaxResponse) {
 		
-		final ChatClientConfig clientConfig;
+		String configId;
 		try {
-			clientConfig = getChatClientConfigFromRequest(request);
-			myChatClientConfigManager.updateConfig(clientConfig, "Edited via UI");
+			configId = getParameterAsStringOrNull(request, CONFIG_ID, "Config ID field must not be empty");
+			String projectId = getParameterAsStringOrNull(request, PROJECT_ID, "Project ID field must not be empty");
+			
+			SProject sProject = this.myProjectManager.findProjectByExternalId(projectId);
+			if (Objects.isNull(sProject)) {
+				ajaxResponse.setAttribute("error", "Unable to find project for id: " + projectId);
+				return;
+			}
+			myChatClientRestarter.stopChatClient(configId);
+			myChatClientConfigManager.deleteConfig(sProject, configId);
 		} catch (ChatClientConfigurationException e) {
 			ajaxResponse.setAttribute("error", e.getMessage());
 			return;
 		}
 		ActionMessages.getOrCreateMessages(request).addMessage("chatBotInfoUpdateResult",
-			"ChatBot Config '" + clientConfig.getName() + "' successfully updated");
+			"ChatBot Config with ID '" + configId + "' successfully deleted");
 		ajaxResponse.setAttribute("status", "OK");
 		ajaxResponse.setAttribute("redirect", "false");
 	}

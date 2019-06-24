@@ -1,7 +1,7 @@
 package chatbot.teamcity.service;
 
-import java.util.HashMap;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
@@ -11,6 +11,7 @@ import chatbot.teamcity.command.CommandResponse;
 import chatbot.teamcity.connection.ChatClient;
 import chatbot.teamcity.connection.ChatClientManager;
 import chatbot.teamcity.exception.ChatClientConfigurationException;
+import chatbot.teamcity.exception.ChatClientExecutionException;
 import chatbot.teamcity.model.ChatClientConfig;
 import chatbot.teamcity.model.Context;
 import chatbot.teamcity.model.Request;
@@ -19,7 +20,7 @@ import jetbrains.buildServer.serverSide.BuildServerAdapter;
 import jetbrains.buildServer.serverSide.SBuildServer;
 
 @Service
-public class ChatServiceImpl extends BuildServerAdapter implements MessageReceiver {
+public class ChatServiceImpl extends BuildServerAdapter implements MessageReceiver, ChatClientRestarter {
 	
 	private final SBuildServer sBuildServer;
 	private final CommandService commandService;
@@ -63,15 +64,60 @@ public class ChatServiceImpl extends BuildServerAdapter implements MessageReceiv
 				ChatClient client = this.chatClientManager.createChatClientInstance(config, this);
 				chatClientManager.register(client);
 				client.start();
-			} catch (ChatClientConfigurationException ex) {
+				chatClientConfigManager.setChatClientStatus(client.getConfigId(), "Started at " + LocalDateTime.now());
+			} catch (ChatClientConfigurationException | ChatClientExecutionException ex) {
 				Loggers.SERVER.warn("ChatServiceImpl :: Unable to create tcChatBot instance: " + ex.getMessage() );
+				chatClientConfigManager.setChatClientStatus(config.getConfigId(), ex.getClass().getSimpleName() + " : " + ex.getMessage());
 			}
 		});
 	}
 	
 	@Override
 	public void serverShutdown() {
-		chatClientManager.shutdownAllClients();
+		this.chatClientManager.getAllChatClientInstances().forEach( client -> {
+			try {
+				client.stop();
+				chatClientConfigManager.setChatClientStatus(client.getConfigId(), "Stopped at " + LocalDateTime.now());
+			} catch (ChatClientExecutionException ex) {
+				Loggers.SERVER.warn("ChatServiceImpl :: Unable to stop tcChatBot instance: " + ex.getMessage() );
+				chatClientConfigManager.setChatClientStatus(client.getConfigId(), ex.getClass().getSimpleName() + " : " + ex.getMessage());
+			}
+		});
+	}
+
+	@Override
+	public void restartChatClient(String configId) {
+		stopChatClient(configId);
+		startChatClient(configId);
+	}
+
+	@Override
+	public void startChatClient(String configId) {
+		ChatClientConfig config = this.chatClientConfigManager.getConfig(configId);
+		try {
+			ChatClient client = chatClientManager.createChatClientInstance(config, this);
+			chatClientManager.register(client);
+			client.start();
+			chatClientConfigManager.setChatClientStatus(client.getConfigId(), "Started at " + LocalDateTime.now());
+		} catch (ChatClientConfigurationException | ChatClientExecutionException ex) {
+			Loggers.SERVER.warn("ChatServiceImpl :: Unable to create tcChatBot instance: " + ex.getMessage() );
+			chatClientConfigManager.setChatClientStatus(config.getConfigId(), ex.getClass().getSimpleName() + " : " + ex.getMessage());
+		}
+		
+	}
+
+	@Override
+	public void stopChatClient(String configId) {
+		ChatClient client = chatClientManager.findChatInstanceForConfigId(configId);
+		if (Objects.nonNull(client)) {
+			try {
+				client.stop();
+				chatClientConfigManager.setChatClientStatus(client.getConfigId(), "Stopped at " + LocalDateTime.now());
+			} catch (ChatClientExecutionException ex) {
+				Loggers.SERVER.warn("ChatServiceImpl :: Unable to stop tcChatBot instance: " + ex.getMessage() );
+				chatClientConfigManager.setChatClientStatus(client.getConfigId(), ex.getClass().getSimpleName() + " : " + ex.getMessage());
+			}
+		}
 	}
 	
 }

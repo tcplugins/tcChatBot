@@ -80,6 +80,7 @@ table.filterTable th {
 
 table.filterTable tr {
 	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
 }
 
 table.filterTable tr.blankline, table.filterTable tr.blankline td {
@@ -107,7 +108,7 @@ tr.filterHeading {
 	background-color: rgb(245, 245, 245);
 }
 
-#repoDeleteFilterDialogSubmit, #deleteRepoDialogSubmit {
+#deleteChatBotDialogSubmit {
 	background-color: red;
 	background-image: linear-gradient(to bottom, #e06667, #e50000);
 }

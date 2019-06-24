@@ -1,18 +1,24 @@
 package chatbot.teamcity.web;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.jetbrains.annotations.NotNull;
 
 import chatbot.teamcity.connection.ChatClientManager;
+import chatbot.teamcity.model.ChatClientConfig;
 import chatbot.teamcity.service.ChatClientConfigManager;
 import chatbot.teamcity.service.UserMappingRepository;
-import chatbot.teamcity.web.ChatBotConfigMapping.ChatBotConfigMappingBuilder;
+import chatbot.teamcity.web.bean.ChatClientConfigWrapperBean;
 import jetbrains.buildServer.controllers.admin.AdminPage;
+import jetbrains.buildServer.serverSide.ProjectManager;
+import jetbrains.buildServer.serverSide.SProject;
+import jetbrains.buildServer.serverSide.auth.AuthUtil;
 import jetbrains.buildServer.serverSide.auth.Permission;
 import jetbrains.buildServer.web.openapi.PagePlaces;
 import jetbrains.buildServer.web.openapi.PluginDescriptor;
@@ -23,19 +29,25 @@ public class ChatBotAdminPage extends AdminPage {
 	private final ChatClientManager myChatClientManager;
 	private final ChatClientConfigManager myChatClientConfigManager;
 	private final UserMappingRepository myUserMappingRepository;
+	private final ProjectManager myProjectManager;
 
 	public ChatBotAdminPage(@NotNull PagePlaces pagePlaces, 
-								  @NotNull PluginDescriptor descriptor,
-								  @NotNull ChatClientManager chatClientManager,
-								  @NotNull ChatClientConfigManager chatClientConfigManager,
-								  @NotNull UserMappingRepository userMappingRepository
-								  ) {
+							@NotNull ProjectManager projectManager,
+							@NotNull PluginDescriptor descriptor,
+							@NotNull ChatClientManager chatClientManager,
+							@NotNull ChatClientConfigManager chatClientConfigManager,
+							@NotNull UserMappingRepository userMappingRepository
+						) 
+	{
 		super(pagePlaces);
 		this.myChatClientManager = chatClientManager;
 		this.myChatClientConfigManager = chatClientConfigManager;
 		this.myUserMappingRepository = userMappingRepository;
+		this.myProjectManager = projectManager;
 		setPluginName(TC_CHAT_BOT_ADMIN_ID);
 		setIncludeUrl(descriptor.getPluginResourcesPath("tcChatBot/adminTab.jsp"));
+		addCssFile(descriptor.getPluginResourcesPath("tcChatBot/css/tcChatBot.css"));
+		addJsFile(descriptor.getPluginResourcesPath("tcChatBot/projectConfigSettings.js"));
 		setTabTitle("Chat Bots");
 		setPosition(PositionConstraint.after("clouds", "email", "jabber", "plugins", "tcDebRepository"));
 		register();
@@ -53,22 +65,25 @@ public class ChatBotAdminPage extends AdminPage {
 	
 	@Override
 	public void fillModel(Map<String, Object> model, HttpServletRequest request) {
+		Map<SProject, List<ChatClientConfigWrapperBean>> projectConfigsAndBots = new LinkedHashMap<>();
 		
-		List<ChatBotConfigMapping> configAndBots = new ArrayList<>();
-		
-		
-		myChatClientConfigManager.getAllConfigs().forEach( config -> {
-			ChatBotConfigMappingBuilder builder = ChatBotConfigMapping.builder().config(config);
-			myChatClientManager.getAllChatClientInstances().forEach( bot -> {
-				if (config.getConfigId().equals(bot.getConfigId())) {
-					builder.client(bot);
-				}
-			});	
-			configAndBots.add(builder.build());
+		myProjectManager.getActiveProjects().forEach(project -> {
+			List<ChatClientConfig> configs = myChatClientConfigManager.getConfigurationsForProject(project);
+			if (!configs.isEmpty()) {
+				projectConfigsAndBots.put(project, getConfigs(configs));
+			}
 		});
-		
-		model.put("chatBots", configAndBots);
-		model.put("chatUsers", myUserMappingRepository.getAllUsersWithMappings());
+		model.put("chatBots", projectConfigsAndBots);
+        model.put("userHasPermissionManagement", true);
+        model.put("chatUsers", myUserMappingRepository.getAllUsersWithMappings());
+    }
+    
+    private List<ChatClientConfigWrapperBean> getConfigs(List<ChatClientConfig> configurationsForProject) {
+    	return configurationsForProject.stream()
+    								   .map(c -> new ChatClientConfigWrapperBean(
+    										   			c, 
+    										   			this.myChatClientConfigManager.getChatClientStatus(c.getConfigId())))
+    								   .collect(Collectors.toList());
 	}
 	
 }

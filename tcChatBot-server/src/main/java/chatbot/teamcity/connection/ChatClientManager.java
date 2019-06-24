@@ -16,5 +16,5 @@ public interface ChatClientManager {
 	public void shutdownAllClients();
 	public ChatClient findChatInstanceForConfigId(String chatClientConfigId);
 	public String getChatClientTypeName(String chatClientType);
-	
+
 }

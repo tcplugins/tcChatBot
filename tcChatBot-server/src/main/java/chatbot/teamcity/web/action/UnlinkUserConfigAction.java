@@ -25,51 +25,57 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import chatbot.teamcity.exception.ChatClientConfigurationException;
-import chatbot.teamcity.model.ChatClientConfig;
-import chatbot.teamcity.service.ChatClientConfigManager;
+import chatbot.teamcity.exception.UserNotFoundException;
+import chatbot.teamcity.model.UserKey;
+import chatbot.teamcity.service.UserService;
 import chatbot.teamcity.web.ChatBotConfigurationEditPageActionController;
 import jetbrains.buildServer.controllers.ActionMessages;
 import jetbrains.buildServer.serverSide.ProjectManager;
-import jetbrains.buildServer.serverSide.SProject;
 import jetbrains.buildServer.web.openapi.ControllerAction;
 
-public class EditChatClientConfigAction extends ChatClientConfigAction implements ControllerAction {
+public class UnlinkUserConfigAction extends ChatClientConfigAction implements ControllerAction {
 
-	private final ProjectManager myProjectManager;
-	private final ChatClientConfigManager myChatClientConfigManager;
-	private final static String EDIT_CHATBOT_ACTION = "editChatBot";
+	private final UserService myUserService;
+	private final static String CHATBOT_ACTION = "unlinkUser";
 
-	public EditChatClientConfigAction(@NotNull ProjectManager projectManager,
-							   		 @NotNull final ChatClientConfigManager chatClientConfigManager,
-							   		 @NotNull final ChatBotConfigurationEditPageActionController controller) {
-
+	public UnlinkUserConfigAction(
+			@NotNull ProjectManager projectManager,
+			@NotNull UserService userService,
+			@NotNull final ChatBotConfigurationEditPageActionController controller) 
+	{
 		super(projectManager);
-		myProjectManager = projectManager;
-		myChatClientConfigManager = chatClientConfigManager;
+		myUserService = userService;
 		controller.registerAction(this);
 	}
 	
 	@Override
 	public String getChatClientConfigAction() {
-		return EDIT_CHATBOT_ACTION;
+		return CHATBOT_ACTION;
 	}
 
 	public void process(@NotNull final HttpServletRequest request, @NotNull final HttpServletResponse response,
 			@Nullable final Element ajaxResponse) {
 		
-		final ChatClientConfig clientConfig;
 		try {
-			clientConfig = getChatClientConfigFromRequest(request);
-			myChatClientConfigManager.updateConfig(clientConfig, "Edited via UI");
-		} catch (ChatClientConfigurationException e) {
-			ajaxResponse.setAttribute("error", e.getMessage());
+			
+    		String chatClientType = getParameterAsStringOrNull(request, "user.chatClientType", "user.chatClientType field must not be empty");
+			String chatClientGroup = getParameterAsStringOrNull(request, "user.chatClientGroup", "user.chatClientGroup field must not be empty");
+			String chatClientUser = getParameterAsStringOrNull(request, "user.chatClientUser", "user.chatClientUser field must not be empty");
+			
+			UserKey userKey = new UserKey(chatClientType, chatClientGroup, chatClientUser);
+			
+			this.myUserService.removeUserMapping(userKey);
+			
+			ActionMessages.getOrCreateMessages(request).addMessage("chatBotInfoUpdateResult",
+					"User Mapping '" + userKey.getMappingKey() + "' successfully deleted");
+			ajaxResponse.setAttribute("status", "OK");
+			ajaxResponse.setAttribute("redirect", "false");
+			
+		} catch (UserNotFoundException e) {
+			ajaxResponse.setAttribute("error", "User not " + e.getMessage());
 			return;
 		}
-		ActionMessages.getOrCreateMessages(request).addMessage("chatBotInfoUpdateResult",
-			"ChatBot Config '" + clientConfig.getName() + "' successfully updated");
-		ajaxResponse.setAttribute("status", "OK");
-		ajaxResponse.setAttribute("redirect", "false");
+		
 	}
 
 

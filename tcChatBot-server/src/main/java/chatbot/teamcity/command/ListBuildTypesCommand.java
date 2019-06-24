@@ -63,7 +63,7 @@ public class ListBuildTypesCommand implements CommandExecutor {
 		try {
 			Loggers.SERVER.debug("ListBuildTypesCommand :: resolving user: " + user);
 			SUser sUser = userService.resolveUser(user);
-			Loggers.SERVER.debug("ListBuildTypesCommand :: User resolves to teamcity user: " + sUser.getName());
+			Loggers.SERVER.debug("ListBuildTypesCommand :: User resolves to teamcity user: " + sUser.getUsername());
 
 			Loggers.SERVER.debug("ListBuildTypesCommand :: finding permissioned buildTypes with search string '" + buildTypeSearchString + "'");
 			List<SBuildType> buildTypes = buildService.findPermissionedBuildTypes(sUser, buildTypeSearchString, permissions);
@@ -108,7 +108,7 @@ public class ListBuildTypesCommand implements CommandExecutor {
 	@Override
 	public List<String> getHelpTextLines() {
 		return Arrays.asList("{command}{keyword} list buildTypes{/command}",
-				"{command}{keyword} list buildTypes <fliter>{/command}");
+				"{command}{keyword} list buildTypes <filter>{/command}");
 	}
 
 	@Override

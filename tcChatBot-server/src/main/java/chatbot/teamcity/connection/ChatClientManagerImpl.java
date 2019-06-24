@@ -71,4 +71,5 @@ public class ChatClientManagerImpl implements ChatClientManager {
 		}
 		return chatClientType;
 	}
+
 }

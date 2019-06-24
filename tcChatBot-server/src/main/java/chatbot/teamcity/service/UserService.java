@@ -19,5 +19,6 @@ public interface UserService {
 	public ValidationHolder validateUser(UUID uuid, SUser teamCityUser);
 	public SUser resolveUser(User user) throws UserNotFoundException;
 	public User createUserMapping(UserKey chatUserKey, SUser sUser, String reason);
+	public User removeUserMapping(UserKey chatUserKey);
 
 }

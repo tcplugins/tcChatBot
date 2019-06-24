@@ -63,7 +63,7 @@ public class ListProjectsCommand implements CommandExecutor {
 		try {
 			Loggers.SERVER.debug("ListProjectsCommand :: resolving user: " + user);
 			SUser sUser = userService.resolveUser(user);
-			Loggers.SERVER.debug("ListProjectsCommand :: User resolves to teamcity user: " + sUser.getName());
+			Loggers.SERVER.debug("ListProjectsCommand :: User resolves to teamcity user: " + sUser.getUsername());
 
 			Loggers.SERVER.debug("ListProjectsCommand :: finding permissioned projects with search string '" + projectSearchString + "'");
 			List<SProject> projects = buildService.findPermissionedProjects(sUser, projectSearchString, permissions);

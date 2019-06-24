@@ -7,8 +7,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import chatbot.teamcity.Loggers;
 import chatbot.teamcity.connection.ChatClientManager;
+import chatbot.teamcity.model.ChatClientConfig;
 import chatbot.teamcity.model.UserKey;
 import chatbot.teamcity.service.UserMappingRepository;
 import chatbot.teamcity.web.bean.ChatUserMappingBean;
@@ -91,7 +96,8 @@ public class UserMappingRepositoryImpl implements UserMappingRepository {
 						beans.add(new ChatUserMappingBean(
 								this.chatClientManager.getChatClientTypeName(userKey.getChatClientType()),
 								userKey, 
-								reason));
+								reason,
+								toJson(userKey)));
 					}
 				});
 				if (! beans.isEmpty()) {
@@ -100,5 +106,10 @@ public class UserMappingRepositoryImpl implements UserMappingRepository {
 			}
 		}
 		return userProperties;
+	}
+	
+	public static String toJson(UserKey userKey) {
+		Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.IDENTITY).create();
+		return gson.toJson(userKey);
 	}
 }
