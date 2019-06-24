@@ -5,6 +5,8 @@ tcChatBot connects to your Chat service, and listens for commands to run on the 
 
 Version 1.0 supports Slack via the RTM WebSockets API. However, the design allows other chat services to be added easy,
  eg MS Teams, MatterMost, DisChord, WebEx, etc.
+ 
+This plugin does not attempt to solve chat notifications. There are plenty of other plugins which can post messages to chat services. The screenshot below shows build status messages sent from the tcWebHooks Slack Compact template.
 
  
 ![Screenshot showing tcChatBot in action](https://raw.githubusercontent.com/tcplugins/tcChatBot/master/docs/images/tcChatBot_Screenshot.png "Chat with tcChatBot") 
