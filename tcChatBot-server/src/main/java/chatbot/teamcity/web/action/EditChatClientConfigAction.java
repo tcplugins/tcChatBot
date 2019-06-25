@@ -31,12 +31,10 @@ import chatbot.teamcity.service.ChatClientConfigManager;
 import chatbot.teamcity.web.ChatBotConfigurationEditPageActionController;
 import jetbrains.buildServer.controllers.ActionMessages;
 import jetbrains.buildServer.serverSide.ProjectManager;
-import jetbrains.buildServer.serverSide.SProject;
 import jetbrains.buildServer.web.openapi.ControllerAction;
 
 public class EditChatClientConfigAction extends ChatClientConfigAction implements ControllerAction {
 
-	private final ProjectManager myProjectManager;
 	private final ChatClientConfigManager myChatClientConfigManager;
 	private final static String EDIT_CHATBOT_ACTION = "editChatBot";
 

@@ -1,6 +1,5 @@
 package chatbot.teamcity.web;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +17,6 @@ import chatbot.teamcity.web.bean.ChatClientConfigWrapperBean;
 import jetbrains.buildServer.controllers.admin.AdminPage;
 import jetbrains.buildServer.serverSide.ProjectManager;
 import jetbrains.buildServer.serverSide.SProject;
-import jetbrains.buildServer.serverSide.auth.AuthUtil;
 import jetbrains.buildServer.serverSide.auth.Permission;
 import jetbrains.buildServer.web.openapi.PagePlaces;
 import jetbrains.buildServer.web.openapi.PluginDescriptor;
@@ -26,7 +24,6 @@ import jetbrains.buildServer.web.openapi.PositionConstraint;
 
 public class ChatBotAdminPage extends AdminPage {
 	public static final String TC_CHAT_BOT_ADMIN_ID = "tcChatBot";
-	private final ChatClientManager myChatClientManager;
 	private final ChatClientConfigManager myChatClientConfigManager;
 	private final UserMappingRepository myUserMappingRepository;
 	private final ProjectManager myProjectManager;
@@ -40,7 +37,6 @@ public class ChatBotAdminPage extends AdminPage {
 						) 
 	{
 		super(pagePlaces);
-		this.myChatClientManager = chatClientManager;
 		this.myChatClientConfigManager = chatClientConfigManager;
 		this.myUserMappingRepository = userMappingRepository;
 		this.myProjectManager = projectManager;

@@ -1,15 +1,13 @@
 package chatbot.teamcity.service;
-import jetbrains.buildServer.groups.SUserGroup;
-import jetbrains.buildServer.serverSide.SProject;
-import jetbrains.buildServer.serverSide.auth.AuthorityHolder;
-import jetbrains.buildServer.serverSide.auth.Role;
-import jetbrains.buildServer.users.SUser;
+import java.util.Collection;
+import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Supplier;
+import jetbrains.buildServer.groups.SUserGroup;
+import jetbrains.buildServer.serverSide.SProject;
+import jetbrains.buildServer.users.SUser;
 
 public interface TeamCityCoreFacade {
 

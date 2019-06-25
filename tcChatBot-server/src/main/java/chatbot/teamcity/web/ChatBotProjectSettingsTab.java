@@ -24,8 +24,6 @@ public class ChatBotProjectSettingsTab extends EditProjectTab {
 	
 	private static final String TAB_TITLE = "Chat Bots";
 	private final SecurityContext mySecurityContext;
-	private final SBuildServer myServer;
-	private final ChatClientManager myChatClientManager;
 	private final ChatClientConfigManager myChatClientConfigManager;
 
 	
@@ -38,10 +36,8 @@ public class ChatBotProjectSettingsTab extends EditProjectTab {
 			@NotNull SecurityContext securityContext,
 			@NotNull SBuildServer sBuildServer) {
 		super(pagePlaces, pluginDescriptor.getPluginName(), "tcChatBot/projectConfigTab.jsp", TAB_TITLE);
-		this.myChatClientManager = chatClientManager;
 		this.myChatClientConfigManager = chatClientConfigManager;
 		this.mySecurityContext = securityContext;
-		this.myServer = sBuildServer;
 		addCssFile(pluginDescriptor.getPluginResourcesPath("tcChatBot/css/tcChatBot.css"));
 		addJsFile(pluginDescriptor.getPluginResourcesPath("tcChatBot/projectConfigSettings.js"));
 	}

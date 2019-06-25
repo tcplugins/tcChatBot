@@ -13,7 +13,6 @@ import com.google.gson.GsonBuilder;
 
 import chatbot.teamcity.Loggers;
 import chatbot.teamcity.connection.ChatClientManager;
-import chatbot.teamcity.model.ChatClientConfig;
 import chatbot.teamcity.model.UserKey;
 import chatbot.teamcity.service.UserMappingRepository;
 import chatbot.teamcity.web.bean.ChatUserMappingBean;

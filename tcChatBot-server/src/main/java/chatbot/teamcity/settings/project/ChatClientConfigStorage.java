@@ -52,10 +52,6 @@ public class ChatClientConfigStorage {
         });
     }
 
-//    public void registerInvitationType(InvitationType invitationType) {
-//        this.invitationTypes.put(invitationType.getId(), invitationType);
-//    }
-
     public ChatClientConfig addChatClientConfig(@NotNull ChatClientConfig chatClientConfig) {
         Map<String, String> params = ChatClientConfigFactory.asMap(chatClientConfig);
         SProject sProject = teamCityCore.findProjectByIntId(chatClientConfig.getProjectInternalId());

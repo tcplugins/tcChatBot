@@ -1,25 +1,21 @@
 package chatbot.teamcity.service;
-import jetbrains.buildServer.groups.SUserGroup;
-import jetbrains.buildServer.groups.UserGroupManager;
-import jetbrains.buildServer.serverSide.*;
-import jetbrains.buildServer.serverSide.auth.AuthorityHolder;
-import jetbrains.buildServer.serverSide.auth.Role;
-import jetbrains.buildServer.serverSide.auth.RoleScope;
-import jetbrains.buildServer.serverSide.auth.SecurityContext;
-import jetbrains.buildServer.users.SUser;
-import jetbrains.buildServer.users.UserModel;
-import jetbrains.buildServer.util.ExceptionUtil;
-import jetbrains.buildServer.web.openapi.PluginDescriptor;
+import java.util.Collection;
+import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Supplier;
+import jetbrains.buildServer.groups.SUserGroup;
+import jetbrains.buildServer.groups.UserGroupManager;
+import jetbrains.buildServer.serverSide.ProjectManager;
+import jetbrains.buildServer.serverSide.SProject;
+import jetbrains.buildServer.serverSide.auth.SecurityContext;
+import jetbrains.buildServer.users.SUser;
+import jetbrains.buildServer.users.UserModel;
+import jetbrains.buildServer.web.openapi.PluginDescriptor;
 
 public class TeamCityCoreFacadeImpl implements TeamCityCoreFacade {
     private final ProjectManager projectManager;
-    private final SecurityContext securityContext;
     private final UserGroupManager userGroupManager;
     private final PluginDescriptor pluginDescriptor;
     private final UserModel userModel;
@@ -27,7 +23,6 @@ public class TeamCityCoreFacadeImpl implements TeamCityCoreFacade {
     public TeamCityCoreFacadeImpl(ProjectManager projectManager, SecurityContext securityContext,
                                   UserGroupManager userGroupManager, PluginDescriptor pluginDescriptor, UserModel userModel) {
         this.projectManager = projectManager;
-        this.securityContext = securityContext;
         this.userGroupManager = userGroupManager;
         this.pluginDescriptor = pluginDescriptor;
         this.userModel = userModel;
