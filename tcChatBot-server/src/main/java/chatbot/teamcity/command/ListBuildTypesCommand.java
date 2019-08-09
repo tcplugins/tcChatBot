@@ -19,15 +19,14 @@ import jetbrains.buildServer.serverSide.auth.Permission;
 import jetbrains.buildServer.serverSide.auth.Permissions;
 import jetbrains.buildServer.users.SUser;
 
-public class ListBuildTypesCommand implements CommandExecutor {
+public class ListBuildTypesCommand extends BaseCommand implements CommandExecutor {
 	
 	private static final String SEARCH_STRING = "searchString";
 
-	final private Pattern listBuildTypesPatternWithName = Pattern.compile("^list\\s+buildtypes\\s+(.+)$", Pattern.CASE_INSENSITIVE);
-	final private Pattern listBuildTypesPattern = Pattern.compile("^list buildtypes$", Pattern.CASE_INSENSITIVE);
+	private final Pattern listBuildTypesPatternWithName = Pattern.compile("^list\\s+buildtypes\\s+(.+)$", Pattern.CASE_INSENSITIVE);
+	private final Pattern listBuildTypesPattern = Pattern.compile("^list buildtypes$", Pattern.CASE_INSENSITIVE);
 	private final Permissions permissions = new Permissions(Permission.VIEW_PROJECT); 
 
-	
 	private final UserService userService;
 	private final BuildService buildService;
 
@@ -101,19 +100,9 @@ public class ListBuildTypesCommand implements CommandExecutor {
 	}
 
 	@Override
-	public int getExecutionOrder() {
-		return 100;
-	}
-
-	@Override
 	public List<String> getHelpTextLines() {
 		return Arrays.asList("{command}{keyword} list buildTypes{/command}",
 				"{command}{keyword} list buildTypes <filter>{/command}");
-	}
-
-	@Override
-	public int getHelpOrder() {
-		return 100;
 	}
 
 }

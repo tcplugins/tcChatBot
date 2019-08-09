@@ -10,9 +10,9 @@ import chatbot.teamcity.model.Request;
 import chatbot.teamcity.model.Response;
 import chatbot.teamcity.service.CommandService;
 
-public class HelpCommand implements CommandExecutor {
+public class HelpCommand extends BaseCommand implements CommandExecutor {
 	
-	final private Pattern helpPattern = Pattern.compile("^help.*$");
+	private final Pattern helpPattern = Pattern.compile("^help.*$");
 	
 	private final CommandService commandService;
 

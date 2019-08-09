@@ -19,10 +19,8 @@ import jetbrains.buildServer.serverSide.auth.Permission;
 import jetbrains.buildServer.serverSide.auth.Permissions;
 import jetbrains.buildServer.users.SUser;
 
-public class ListProjectsCommand implements CommandExecutor {
+public class ListProjectsCommand extends BaseCommand implements CommandExecutor {
 	
-	private static final String SEARCH_STRING = "searchString";
-
 	final private Pattern listProjectsPatternWithName = Pattern.compile("^list projects (.+)$");
 	final private Pattern listProjectsPattern = Pattern.compile("^list projects$");
 	private final Permissions permissions = new Permissions(Permission.VIEW_PROJECT); 
@@ -58,7 +56,7 @@ public class ListProjectsCommand implements CommandExecutor {
 		User user = request.getUser();
 		updateContext(context, request);
 		
-		String projectSearchString = context.getProperty(SEARCH_STRING);
+		String projectSearchString = context.getProperty(PROJECT_SEARCH_STRING);
 		
 		try {
 			Loggers.SERVER.debug("ListProjectsCommand :: resolving user: " + user);
@@ -71,7 +69,7 @@ public class ListProjectsCommand implements CommandExecutor {
 			
 			if (projects.isEmpty()) {
 				Loggers.SERVER.debug("ListProjectsCommand :: User '" + user + "' is not permisioned to see any matching buildTypes. Search string was: '" + projectSearchString + "'");
-				response.addMessage("Sorry, {user}. No matching project found with the name '" + context.getProperty(SEARCH_STRING) + "'.");
+				response.addMessage("Sorry, {user}. No matching project found with the name '" + context.getProperty(PROJECT_SEARCH_STRING) + "'.");
 			} else {
 				projects.forEach( project -> {
 					response.addMessage("{fixedWidth}" + project.getExternalId() + "{/fixedWidth} : " + project.getName());
@@ -93,27 +91,17 @@ public class ListProjectsCommand implements CommandExecutor {
 		Matcher matcher = listProjectsPattern.matcher(request.getMessage());
 		if (matcherWithName.matches()) {
 			Loggers.SERVER.debug("ListProjectsCommand :: Match found in search string '" + request.getMessage() + "' using pattern '" + listProjectsPatternWithName.toString() + "'");
-			context.setProperty(SEARCH_STRING, matcherWithName.group(1));
+			context.setProperty(PROJECT_SEARCH_STRING, matcherWithName.group(1));
 		} else if (matcher.matches()) {
 			Loggers.SERVER.debug("ListProjectsCommand :: Match found without search string '" + request.getMessage() + "' using pattern '" + listProjectsPattern.toString() + "'");
-			context.setProperty(SEARCH_STRING, "");
+			context.setProperty(PROJECT_SEARCH_STRING, "");
 		}
-	}
-
-	@Override
-	public int getExecutionOrder() {
-		return 100;
 	}
 
 	@Override
 	public List<String> getHelpTextLines() {
 		return Arrays.asList("{command}{keyword} list projects{/command}",
 				"{command}{keyword} list projects <filter>{/command}");
-	}
-
-	@Override
-	public int getHelpOrder() {
-		return 100;
 	}
 
 }

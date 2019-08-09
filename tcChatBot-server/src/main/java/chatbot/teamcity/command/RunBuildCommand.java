@@ -23,15 +23,10 @@ import jetbrains.buildServer.serverSide.auth.Permission;
 import jetbrains.buildServer.serverSide.auth.Permissions;
 import jetbrains.buildServer.users.SUser;
 
-public class RunBuildCommand implements CommandExecutor {
+public class RunBuildCommand extends BaseCommand implements CommandExecutor {
 	
-	private static final String BUILD_SEARCH_STRING = "buildSearchString";
-	private static final String BUILD_TYPE_NAME = "buildTypeName";
-	private static final String BUILD_TYPE_EXTERNAL_ID = "buildTypeExternalId";
-
 	final private Pattern runBuildPattern = Pattern.compile("^run (.+)$");
 	private final Permissions permissions = new Permissions(Permission.RUN_BUILD); 
-
 	
 	private final UserService userService;
 	private final BuildService buildService;
@@ -111,18 +106,8 @@ public class RunBuildCommand implements CommandExecutor {
 	}
 
 	@Override
-	public int getExecutionOrder() {
-		return 100;
-	}
-
-	@Override
 	public List<String> getHelpTextLines() {
 		return Arrays.asList("{command}{keyword} run <filter>{/command}");
-	}
-
-	@Override
-	public int getHelpOrder() {
-		return 100;
 	}
 
 }
