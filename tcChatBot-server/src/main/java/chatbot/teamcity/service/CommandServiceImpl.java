@@ -28,8 +28,8 @@ public class CommandServiceImpl implements CommandService {
 	public void registerCommandExecutor(CommandExecutor executor) {
 		Loggers.SERVER.info("CommandExecutor registered: " + executor.getCommandType());
 		this.executors.put(executor.getCommandType(), executor);
-		this.orderedExecutorsCollection = new ArrayList<CommandExecutor>(executors.values());
-		this.orderedHelpCollection = new ArrayList<CommandExecutor>(executors.values());
+		this.orderedExecutorsCollection = new ArrayList<>(executors.values());
+		this.orderedHelpCollection = new ArrayList<>(executors.values());
 		Collections.sort(this.orderedExecutorsCollection, rankComparator);
 		Collections.sort(this.orderedHelpCollection, helpComparator);
 	}

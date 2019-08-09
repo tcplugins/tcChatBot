@@ -12,7 +12,7 @@ public class MultiplePermissionedBuildTypesFoundException extends RuntimeExcepti
 
 	private static final long serialVersionUID = 1L;
 	private final String buildTypeName;
-	private final Permissions permissions;
-	private final List<SBuildType> buildTypes;
+	private final transient Permissions permissions;
+	private final transient List<SBuildType> buildTypes;
 
 }

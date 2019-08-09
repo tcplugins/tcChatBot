@@ -29,14 +29,15 @@ import chatbot.teamcity.exception.ChatClientConfigurationException;
 import chatbot.teamcity.model.ChatClientConfig;
 import chatbot.teamcity.service.ChatClientConfigManager;
 import chatbot.teamcity.web.ChatBotConfigurationEditPageActionController;
+import chatbot.teamcity.web.ChatBotUserLinkingController;
 import jetbrains.buildServer.controllers.ActionMessages;
 import jetbrains.buildServer.serverSide.ProjectManager;
 import jetbrains.buildServer.web.openapi.ControllerAction;
 
 public class AddChatClientConfigAction extends ChatClientConfigAction implements ControllerAction {
 
+	private static final String ADD_CHATBOT_ACTION = "addChatBot";
 	private final ChatClientConfigManager myChatClientConfigManager;
-	private final static String ADD_CHATBOT_ACTION = "addChatBot";
 
 	public AddChatClientConfigAction(@NotNull ProjectManager projectManager,
 							   		 @NotNull final ChatClientConfigManager chatClientConfigManager,
@@ -61,7 +62,7 @@ public class AddChatClientConfigAction extends ChatClientConfigAction implements
 			clientConfig = getChatClientConfigFromRequest(request);
 			myChatClientConfigManager.registerConfig(clientConfig);
 		} catch (ChatClientConfigurationException e) {
-			ajaxResponse.setAttribute("error", e.getMessage());
+			ajaxResponse.setAttribute(ChatBotUserLinkingController.ERROR_KEY, e.getMessage());
 			return;
 		}
 		ActionMessages.getOrCreateMessages(request).addMessage("chatBotInfoUpdateResult",

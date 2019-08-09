@@ -8,18 +8,17 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jetbrains.annotations.NotNull;
 
-import chatbot.teamcity.connection.ChatClientManager;
 import chatbot.teamcity.model.ChatClientConfig;
 import chatbot.teamcity.service.ChatClientConfigManager;
 import chatbot.teamcity.web.bean.ChatClientConfigWrapperBean;
 import jetbrains.buildServer.controllers.admin.projects.EditProjectTab;
-import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.SProject;
 import jetbrains.buildServer.serverSide.auth.AuthUtil;
 import jetbrains.buildServer.serverSide.auth.SecurityContext;
 import jetbrains.buildServer.web.openapi.PagePlaces;
 import jetbrains.buildServer.web.openapi.PluginDescriptor;
 
+@SuppressWarnings("squid:MaximumInheritanceDepth")
 public class ChatBotProjectSettingsTab extends EditProjectTab {
 	
 	private static final String TAB_TITLE = "Chat Bots";
@@ -29,12 +28,9 @@ public class ChatBotProjectSettingsTab extends EditProjectTab {
 	
 	public ChatBotProjectSettingsTab(
 			@NotNull PagePlaces pagePlaces, 
-			@NotNull PluginDescriptor descriptor,
-			@NotNull ChatClientManager chatClientManager,
 			@NotNull ChatClientConfigManager chatClientConfigManager,
 			@NotNull PluginDescriptor pluginDescriptor,
-			@NotNull SecurityContext securityContext,
-			@NotNull SBuildServer sBuildServer) {
+			@NotNull SecurityContext securityContext) {
 		super(pagePlaces, pluginDescriptor.getPluginName(), "tcChatBot/projectConfigTab.jsp", TAB_TITLE);
 		this.myChatClientConfigManager = chatClientConfigManager;
 		this.mySecurityContext = securityContext;

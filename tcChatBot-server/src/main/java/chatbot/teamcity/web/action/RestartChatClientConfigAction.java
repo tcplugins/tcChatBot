@@ -18,6 +18,9 @@
  *******************************************************************************/
 package chatbot.teamcity.web.action;
 
+import static chatbot.teamcity.web.ChatBotUserLinkingController.ERROR_KEY;
+import static chatbot.teamcity.web.ChatBotUserLinkingController.REDIRECT_KEY;
+import static chatbot.teamcity.web.ChatBotUserLinkingController.STATUS_KEY;
 import static chatbot.teamcity.web.ChatBotConfigurationEditPageActionController.CONFIG_ID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,8 +39,8 @@ import jetbrains.buildServer.web.openapi.ControllerAction;
 
 public class RestartChatClientConfigAction extends ChatClientConfigAction implements ControllerAction {
 
+	private static final String CHATBOT_ACTION = "restartChatBot";
 	private final ChatClientRestarter myChatClientRestarter;
-	private final static String CHATBOT_ACTION = "restartChatBot";
 
 	public RestartChatClientConfigAction(
 			@NotNull ProjectManager projectManager,
@@ -62,7 +65,7 @@ public class RestartChatClientConfigAction extends ChatClientConfigAction implem
 		try {
 			configId = getParameterAsStringOrNull(request, CONFIG_ID, "Config ID field must not be empty");
 		} catch (ChatClientConfigurationException e) {
-			ajaxResponse.setAttribute("error", e.getMessage());
+			ajaxResponse.setAttribute(ERROR_KEY, e.getMessage());
 			return;
 		}
 		
@@ -70,8 +73,8 @@ public class RestartChatClientConfigAction extends ChatClientConfigAction implem
 			
 		ActionMessages.getOrCreateMessages(request).addMessage("chatBotInfoUpdateResult",
 			"ChatBot Config with ID '" + configId + "' successfully restarted");
-		ajaxResponse.setAttribute("status", "OK");
-		ajaxResponse.setAttribute("redirect", "false");
+		ajaxResponse.setAttribute(STATUS_KEY, "OK");
+		ajaxResponse.setAttribute(REDIRECT_KEY, "false");
 	}
 
 

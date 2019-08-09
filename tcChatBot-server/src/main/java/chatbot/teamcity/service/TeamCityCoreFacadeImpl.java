@@ -9,7 +9,6 @@ import jetbrains.buildServer.groups.SUserGroup;
 import jetbrains.buildServer.groups.UserGroupManager;
 import jetbrains.buildServer.serverSide.ProjectManager;
 import jetbrains.buildServer.serverSide.SProject;
-import jetbrains.buildServer.serverSide.auth.SecurityContext;
 import jetbrains.buildServer.users.SUser;
 import jetbrains.buildServer.users.UserModel;
 import jetbrains.buildServer.web.openapi.PluginDescriptor;
@@ -20,8 +19,11 @@ public class TeamCityCoreFacadeImpl implements TeamCityCoreFacade {
     private final PluginDescriptor pluginDescriptor;
     private final UserModel userModel;
 
-    public TeamCityCoreFacadeImpl(ProjectManager projectManager, SecurityContext securityContext,
-                                  UserGroupManager userGroupManager, PluginDescriptor pluginDescriptor, UserModel userModel) {
+    public TeamCityCoreFacadeImpl(ProjectManager projectManager,
+                                  UserGroupManager userGroupManager, 
+                                  PluginDescriptor pluginDescriptor, 
+                                  UserModel userModel)
+    {
         this.projectManager = projectManager;
         this.userGroupManager = userGroupManager;
         this.pluginDescriptor = pluginDescriptor;

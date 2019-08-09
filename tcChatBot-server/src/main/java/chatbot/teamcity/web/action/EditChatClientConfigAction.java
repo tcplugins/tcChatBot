@@ -18,6 +18,8 @@
  *******************************************************************************/
 package chatbot.teamcity.web.action;
 
+import static chatbot.teamcity.web.ChatBotUserLinkingController.*;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,8 +37,8 @@ import jetbrains.buildServer.web.openapi.ControllerAction;
 
 public class EditChatClientConfigAction extends ChatClientConfigAction implements ControllerAction {
 
+	private static final String EDIT_CHATBOT_ACTION = "editChatBot";
 	private final ChatClientConfigManager myChatClientConfigManager;
-	private final static String EDIT_CHATBOT_ACTION = "editChatBot";
 
 	public EditChatClientConfigAction(@NotNull ProjectManager projectManager,
 							   		 @NotNull final ChatClientConfigManager chatClientConfigManager,
@@ -61,13 +63,13 @@ public class EditChatClientConfigAction extends ChatClientConfigAction implement
 			clientConfig = getChatClientConfigFromRequest(request);
 			myChatClientConfigManager.updateConfig(clientConfig, "Edited via UI");
 		} catch (ChatClientConfigurationException e) {
-			ajaxResponse.setAttribute("error", e.getMessage());
+			ajaxResponse.setAttribute(ERROR_KEY, e.getMessage());
 			return;
 		}
 		ActionMessages.getOrCreateMessages(request).addMessage("chatBotInfoUpdateResult",
 			"ChatBot Config '" + clientConfig.getName() + "' successfully updated");
-		ajaxResponse.setAttribute("status", "OK");
-		ajaxResponse.setAttribute("redirect", "false");
+		ajaxResponse.setAttribute(STATUS_KEY, "OK");
+		ajaxResponse.setAttribute(REDIRECT_KEY, "false");
 	}
 
 

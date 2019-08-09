@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @Data @NoArgsConstructor @AllArgsConstructor
 public class ChatClientConfig {
 	
-	public static String BOOLEAN_PROPERTY_PREFIX = "boolean:";
-	public static String SECURE_PROPERTY_PREFIX = Constants.SECURE_PROPERTY_PREFIX;
+	public static final String BOOLEAN_PROPERTY_PREFIX = "boolean:";
+	public static final String SECURE_PROPERTY_PREFIX = Constants.SECURE_PROPERTY_PREFIX;
 
 	String configId;
 	String name;

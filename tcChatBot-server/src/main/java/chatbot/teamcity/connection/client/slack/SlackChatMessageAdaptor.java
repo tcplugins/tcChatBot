@@ -20,19 +20,26 @@ import lombok.Setter;
 
 public class SlackChatMessageAdaptor implements ChatMessageAdapter<JsonNode, String> {
 	
+	private static final String SLACK_KEY_TEXT = "text";
+	private static final String BUNDLE_KEY_CLIENT_MSG_ID = "client_msg_id";
+	private static final String BUNDLE_KEY_TYPE = "type";
+	private static final String BUNDLE_KEY_RAW_TEXT = "raw_text";
+	private static final String BUNDLE_KEY_USER_NAME = "user_name";
+	private static final String BUNDLE_KEY_TEAM = "team";
+	private static final String BUNDLE_KEY_CHANNEL = "channel";
 	ObjectMapper mapper = new ObjectMapper();
 	AtomicInteger messageSequenceId = new AtomicInteger(0);
 
 	@Override
 	public Request fromClient(JsonNode slackMessage, User user, MessageResponder responder) {
 		Bundle b = new Bundle();
-		b.put("channel", slackMessage.findValue("channel").asText());
-		b.put("team", slackMessage.findValue("team").asText());
-		b.put("client_msg_id", slackMessage.findValue("client_msg_id").asText());
-		b.put("type", slackMessage.findValue("type").asText());
-		b.put("raw_text", slackMessage.findValue("text").asText());
-		b.put("user_name", user.getChatUser().getChatUserName());
-		String messageWithoutKeyword = slackMessage.findValue("text").asText().substring(responder.getKeyword().length() + 1);
+		b.put(BUNDLE_KEY_CHANNEL, slackMessage.findValue(BUNDLE_KEY_CHANNEL).asText());
+		b.put(BUNDLE_KEY_TEAM, slackMessage.findValue(BUNDLE_KEY_TEAM).asText());
+		b.put(BUNDLE_KEY_CLIENT_MSG_ID, slackMessage.findValue(BUNDLE_KEY_CLIENT_MSG_ID).asText());
+		b.put(BUNDLE_KEY_TYPE, slackMessage.findValue(BUNDLE_KEY_TYPE).asText());
+		b.put(BUNDLE_KEY_RAW_TEXT, slackMessage.findValue(SLACK_KEY_TEXT).asText());
+		b.put(BUNDLE_KEY_USER_NAME, user.getChatUser().getChatUserName());
+		String messageWithoutKeyword = slackMessage.findValue(SLACK_KEY_TEXT).asText().substring(responder.getKeyword().length() + 1);
 		Loggers.SERVER.info(slackMessage.toString());
 		return new Request(user, messageWithoutKeyword, responder, b);
 		
@@ -46,7 +53,7 @@ public class SlackChatMessageAdaptor implements ChatMessageAdapter<JsonNode, Str
 										responseMessage.getMessages().stream()
 																	 .map( s -> processTemplate(
 																			 responseMessage, 
-																			 s.toString())
+																			 s)
 																		 )
 																	 .collect( Collectors.joining("\n")), 
 										messageSequenceId.incrementAndGet()
@@ -59,7 +66,7 @@ public class SlackChatMessageAdaptor implements ChatMessageAdapter<JsonNode, Str
 	
 	private String processTemplate(Response responseMessage, String string) {
 		return string
-				.replaceAll("\\{user\\}", "<@" + responseMessage.getBundle().get("user_name").toString() + ">")
+				.replaceAll("\\{user\\}", "<@" + responseMessage.getBundle().get(BUNDLE_KEY_USER_NAME).toString() + ">")
 				.replaceAll("\\{keyword\\}", responseMessage.getMessenger().getKeyword())
 				.replaceAll("\\{command\\}", "`")
 				.replaceAll("\\{/command\\}", "`")
@@ -80,7 +87,7 @@ public class SlackChatMessageAdaptor implements ChatMessageAdapter<JsonNode, Str
 			SlackMessage message = new SlackMessage();
 			message.id = id;
 			message.text = text;
-			message.channel = bundle.get("channel").toString();
+			message.channel = bundle.get(BUNDLE_KEY_CHANNEL).toString();
 			message.type = "message";
 			
 			return message;

@@ -29,7 +29,7 @@ public class SlackChatClientFactory implements ChatClientFactory {
 	@Override
 	public ChatClient createChatClient(ChatClientConfig config, MessageReceiver messageReceiver) {
 		if (config.getProperties().containsKey(TOKEN_KEY)) {
-			SlackChatClient client = new SlackChatClient(
+			return new SlackChatClient(
 					config.getConfigId(),
 					UUID.randomUUID().toString(),
 					config.getProperties().get(TOKEN_KEY),
@@ -39,7 +39,6 @@ public class SlackChatClientFactory implements ChatClientFactory {
 					this.slackUserService,
 					config.getEmailAutoMappingEnabled()
 					);
-			return client;
 		}
 		throw new ChatClientConfigurationException("No token found");
 	}

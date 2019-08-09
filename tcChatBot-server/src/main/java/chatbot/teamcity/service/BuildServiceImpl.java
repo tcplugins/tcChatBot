@@ -60,9 +60,9 @@ public class BuildServiceImpl implements BuildService {
 		
 		/* Fetch all the projects once */
 		Map<String,SProject> projects = new HashMap<>(); 
-		projectPermissions.forEach((id, perms) -> {
-			projects.put(id, projectManager.findProjectById(id));
-		});
+		projectPermissions.forEach((id, perms) -> 
+			projects.put(id, projectManager.findProjectById(id))
+		);
 		
 		Set<SBuildType> allPermissionedBuildTypes = new TreeSet<>();
 		
@@ -126,12 +126,12 @@ public class BuildServiceImpl implements BuildService {
 
 	private boolean isBuildTypePermissioned(SUser sUser, Permissions permissions, SBuildType buildType) {
 		List<String> projectIds = new ArrayList<>();
-		buildType.getProject().getProjectPath().forEach(project -> { projectIds.add(project.getProjectId()); });
+		buildType.getProject().getProjectPath().forEach(project -> projectIds.add(project.getProjectId()));
 		return sUser.getPermissionsGrantedForAnyOfProjects(projectIds).containsAny(permissions);
 	}
 	
 	@Override
-	public SQueuedBuild queueBuild(SUser sUser, SBuildType sBuildType) throws CommandNotPermissionedException {
+	public SQueuedBuild queueBuild(SUser sUser, SBuildType sBuildType) {
 		Permissions runBuildPermission = new Permissions(Permission.RUN_BUILD);
 		if (isBuildTypePermissioned(sUser, runBuildPermission, sBuildType)) {
 			TriggeredByBuilder tbb = new TriggeredByBuilder(sUser);
@@ -149,9 +149,7 @@ public class BuildServiceImpl implements BuildService {
 		Map<String,Permissions> projectPermissions = getProjectsPermissions(sUser, permissions);
 		
 		/* Fetch all the projects once */
-		projectPermissions.forEach((id, perms) -> {
-			projects.put(id, projectManager.findProjectById(id));
-		});
+		projectPermissions.forEach((id, perms) -> projects.put(id, projectManager.findProjectById(id)));
 		
 		/* Look for exact match of externalID */
 		projectPermissions.forEach((id, perms) -> {
@@ -224,8 +222,9 @@ public class BuildServiceImpl implements BuildService {
 
 	private Map<String, Permissions> getProjectsPermissions(SUser sUser, Permissions permissions) {
 		if (sUser.getGlobalPermissions().containsAny(permissions)) {
-			return projectManager.getActiveProjects().stream()
-													 .collect(Collectors.toMap(p -> p.getProjectId(), p-> permissions));
+			return projectManager.getActiveProjects()
+					.stream()
+					.collect(Collectors.toMap(SProject::getProjectId, p-> permissions));
 		}
 		return sUser.getProjectsPermissions();
 	}

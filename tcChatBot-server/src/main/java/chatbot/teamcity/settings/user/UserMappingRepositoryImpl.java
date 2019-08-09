@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -84,7 +85,7 @@ public class UserMappingRepositoryImpl implements UserMappingRepository {
 			// Find only the Properties that are for our plugin with the mapping prefix (not the reason prefix).
 			Map<PropertyKey, String> ourProperties = sUser.getProperties().entrySet().stream()
 											.filter(e -> e.getKey().getKey().contains(UserMappingProperties.getMappingPropertyKeySuffix()))
-											.collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue()));
+											.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 			if (! ourProperties.isEmpty()) {
 				List<ChatUserMappingBean> beans = new ArrayList<>();
 				ourProperties.forEach((p,s) -> {

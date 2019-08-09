@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jetbrains.annotations.NotNull;
 
-import chatbot.teamcity.connection.ChatClientManager;
 import chatbot.teamcity.model.ChatClientConfig;
 import chatbot.teamcity.service.ChatClientConfigManager;
 import chatbot.teamcity.service.UserMappingRepository;
@@ -22,6 +21,7 @@ import jetbrains.buildServer.web.openapi.PagePlaces;
 import jetbrains.buildServer.web.openapi.PluginDescriptor;
 import jetbrains.buildServer.web.openapi.PositionConstraint;
 
+@SuppressWarnings("squid:MaximumInheritanceDepth")
 public class ChatBotAdminPage extends AdminPage {
 	public static final String TC_CHAT_BOT_ADMIN_ID = "tcChatBot";
 	private final ChatClientConfigManager myChatClientConfigManager;
@@ -31,7 +31,6 @@ public class ChatBotAdminPage extends AdminPage {
 	public ChatBotAdminPage(@NotNull PagePlaces pagePlaces, 
 							@NotNull ProjectManager projectManager,
 							@NotNull PluginDescriptor descriptor,
-							@NotNull ChatClientManager chatClientManager,
 							@NotNull ChatClientConfigManager chatClientConfigManager,
 							@NotNull UserMappingRepository userMappingRepository
 						) 

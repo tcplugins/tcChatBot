@@ -9,5 +9,5 @@ public class CommandNotPermissionedException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 	private final String buildTypeName;
-	private final Permissions permissions;
+	private final transient Permissions permissions;
 }

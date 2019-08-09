@@ -12,7 +12,7 @@ import chatbot.teamcity.service.CommandService;
 
 public class HelpCommand extends BaseCommand implements CommandExecutor {
 	
-	private final Pattern helpPattern = Pattern.compile("^help.*$");
+	private static final Pattern helpPattern = Pattern.compile("^help.*$");
 	
 	private final CommandService commandService;
 

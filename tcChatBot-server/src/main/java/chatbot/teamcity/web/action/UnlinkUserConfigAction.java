@@ -18,6 +18,8 @@
  *******************************************************************************/
 package chatbot.teamcity.web.action;
 
+import static chatbot.teamcity.web.ChatBotUserLinkingController.*;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,8 +37,8 @@ import jetbrains.buildServer.web.openapi.ControllerAction;
 
 public class UnlinkUserConfigAction extends ChatClientConfigAction implements ControllerAction {
 
+	private static final String CHATBOT_ACTION = "unlinkUser";
 	private final UserService myUserService;
-	private final static String CHATBOT_ACTION = "unlinkUser";
 
 	public UnlinkUserConfigAction(
 			@NotNull ProjectManager projectManager,
@@ -68,11 +70,11 @@ public class UnlinkUserConfigAction extends ChatClientConfigAction implements Co
 			
 			ActionMessages.getOrCreateMessages(request).addMessage("chatBotInfoUpdateResult",
 					"User Mapping '" + userKey.getMappingKey() + "' successfully deleted");
-			ajaxResponse.setAttribute("status", "OK");
-			ajaxResponse.setAttribute("redirect", "false");
+			ajaxResponse.setAttribute(STATUS_KEY, "OK");
+			ajaxResponse.setAttribute(REDIRECT_KEY, "false");
 			
 		} catch (UserNotFoundException e) {
-			ajaxResponse.setAttribute("error", "User not " + e.getMessage());
+			ajaxResponse.setAttribute(ERROR_KEY, "User not " + e.getMessage());
 			return;
 		}
 		

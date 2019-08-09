@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
 	
 
 	@Override
-	public SUser resolveUser(User user) throws UserNotFoundException {
+	public SUser resolveUser(User user) {
 		User u = findUser(user.getChatUser());
 		SUser sUser = teamCityUserService.findUserById(u.getTeamCityUserId()); 
 		if (sUser == null) {
@@ -50,12 +50,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean userHasPermissionForBuildType(User user, String buildTypeName, Permissions permissions) throws UserNotFoundException {
+	public boolean userHasPermissionForBuildType(User user, String buildTypeName, Permissions permissions) {
 		return buildService.findPermissionedBuildType(resolveUser(user), buildTypeName, permissions) != null;
 	}
 
 	@Override
-	public User findUser(UserKey chatUser) throws UserNotFoundException {
+	public User findUser(UserKey chatUser) {
 		
 		if (users.containsKey(chatUser)) {
 			return users.get(chatUser);

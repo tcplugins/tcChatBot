@@ -43,7 +43,7 @@ public abstract class ChatClientConfigAction {
 		this.myProjectManager = projectManager;
 	}
 
-	protected ChatClientConfig getChatClientConfigFromRequest(@NotNull final HttpServletRequest request) throws ChatClientConfigurationException {
+	protected ChatClientConfig getChatClientConfigFromRequest(@NotNull final HttpServletRequest request) {
 		
 		String id = StringUtil.nullIfEmpty(request.getParameter(CONFIG_ID));
 		
@@ -86,7 +86,7 @@ public abstract class ChatClientConfigAction {
 		return Boolean.parseBoolean(returnValue);
 	}
 
-	public String getParameterAsStringOrNull(HttpServletRequest request, String paramName, String errorMessage) throws ChatClientConfigurationException {
+	public String getParameterAsStringOrNull(HttpServletRequest request, String paramName, String errorMessage) {
 		String returnValue = StringUtil.nullIfEmpty(request.getParameter(paramName));
 		if (returnValue == null || "".equals(returnValue.trim())) {
 			throw new ChatClientConfigurationException(errorMessage);

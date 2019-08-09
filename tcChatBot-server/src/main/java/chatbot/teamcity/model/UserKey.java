@@ -28,6 +28,8 @@ public class UserKey {
 	
 	private static class UserKeyValidator implements Validator {
 
+		private static final String FIELD_REQUIRED = "field.required";
+
 		@Override
 		public boolean supports(Class<?> clazz) {
 			return UserKey.class.isAssignableFrom(clazz);
@@ -35,9 +37,9 @@ public class UserKey {
 
 		@Override
 		public void validate(Object target, Errors errors) {
-		       ValidationUtils.rejectIfEmptyOrWhitespace(errors, "chatClientType", "field.required");
-		       ValidationUtils.rejectIfEmptyOrWhitespace(errors, "chatClientGroup", "field.required");
-		       ValidationUtils.rejectIfEmptyOrWhitespace(errors, "chatUserName", "field.required");
+		       ValidationUtils.rejectIfEmptyOrWhitespace(errors, "chatClientType", FIELD_REQUIRED);
+		       ValidationUtils.rejectIfEmptyOrWhitespace(errors, "chatClientGroup", FIELD_REQUIRED);
+		       ValidationUtils.rejectIfEmptyOrWhitespace(errors, "chatUserName", FIELD_REQUIRED);
 		}
 		
 	}

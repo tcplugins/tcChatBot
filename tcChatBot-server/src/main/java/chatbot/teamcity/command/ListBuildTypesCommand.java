@@ -23,9 +23,9 @@ public class ListBuildTypesCommand extends BaseCommand implements CommandExecuto
 	
 	private static final String SEARCH_STRING = "searchString";
 
-	private final Pattern listBuildTypesPatternWithName = Pattern.compile("^list\\s+buildtypes\\s+(.+)$", Pattern.CASE_INSENSITIVE);
-	private final Pattern listBuildTypesPattern = Pattern.compile("^list buildtypes$", Pattern.CASE_INSENSITIVE);
-	private final Permissions permissions = new Permissions(Permission.VIEW_PROJECT); 
+	private static final Pattern listBuildTypesPatternWithName = Pattern.compile("^list\\s+buildtypes\\s+(.+)$", Pattern.CASE_INSENSITIVE);
+	private static final Pattern listBuildTypesPattern = Pattern.compile("^list buildtypes$", Pattern.CASE_INSENSITIVE);
+	private static final Permissions permissions = new Permissions(Permission.VIEW_PROJECT); 
 
 	private final UserService userService;
 	private final BuildService buildService;
@@ -72,9 +72,9 @@ public class ListBuildTypesCommand extends BaseCommand implements CommandExecuto
 				Loggers.SERVER.debug("ListBuildTypesCommand :: User '" + user + "' is not permisioned to see any matching buildTypes. Search string was: '" + buildTypeSearchString + "'");
 				response.addMessage("Sorry, {user}. No matching buildType found with the name '" + context.getProperty(SEARCH_STRING) + "'.");
 			} else {
-				buildTypes.forEach( buildType -> {
-					response.addMessage("{fixedWidth}" + buildType.getExternalId() + "{/fixedWidth} : " + buildType.getName());
-				});
+				buildTypes.forEach( buildType 
+						-> 	response.addMessage("{fixedWidth}" + buildType.getExternalId() + "{/fixedWidth} : " + buildType.getName())
+				);
 			}
 
 		} catch (UserNotFoundException ex) {

@@ -64,7 +64,10 @@ public class ChatClientConfigStorage {
 
     @NotNull
     public List<ChatClientConfig> getChatClientConfigs(@NotNull SProject project) {
-        return project.getOwnFeaturesOfType(PROJECT_FEATURE_TYPE).stream().map(feature -> fromProjectFeature(project, feature)).collect(toList());
+        return project.getOwnFeaturesOfType(PROJECT_FEATURE_TYPE)
+        			  .stream()
+        			  .map(this::fromProjectFeature)
+        			  .collect(toList());
     }
 
     public ChatClientConfig removeChatClientConfig(@NotNull SProject project, @NotNull String configId) {
@@ -75,7 +78,7 @@ public class ChatClientConfigStorage {
         if (featureDescriptor.isPresent()) {
             project.removeFeature(featureDescriptor.get().getId());
             teamCityCore.persist(project.getProjectId(), "ChatClientConfig removed");
-            return fromProjectFeature(project, featureDescriptor.get());
+            return fromProjectFeature(featureDescriptor.get());
         } else {
             return null;
         }
@@ -110,7 +113,7 @@ public class ChatClientConfigStorage {
         myChatClientConfigCache = new HashMap<>();
         for (SProject project : teamCityCore.getActiveProjects()) {
             for (SProjectFeatureDescriptor feature : project.getOwnFeaturesOfType(PROJECT_FEATURE_TYPE)) {
-                myChatClientConfigCache.put(feature.getParameters().get(ChatClientConfigFactory.CONFIG_ID_KEY), fromProjectFeature(project, feature));
+                myChatClientConfigCache.put(feature.getParameters().get(ChatClientConfigFactory.CONFIG_ID_KEY), fromProjectFeature(feature));
             }
         }
         Loggers.SERVER.debug("ChatClientConfigStorage :: Rebuilt myChatClientConfigCache cache. It now contains " +  myChatClientConfigCache.size() + " entries.");
@@ -120,8 +123,8 @@ public class ChatClientConfigStorage {
         myChatClientConfigCache = null;
     }
 
-    private ChatClientConfig fromProjectFeature(SProject project, SProjectFeatureDescriptor feature) {
-        return ChatClientConfigFactory.readFrom(feature.getParameters(), project.getProjectId());
+    private ChatClientConfig fromProjectFeature(SProjectFeatureDescriptor feature) {
+        return ChatClientConfigFactory.readFrom(feature.getParameters());
     }
 
 	public Collection<ChatClientConfig> getAllChatClientConfigs() {

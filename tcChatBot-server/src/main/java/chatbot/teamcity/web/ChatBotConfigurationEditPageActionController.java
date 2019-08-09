@@ -1,6 +1,6 @@
 /*******************************************************************************
  *
- *  Copyright 2016 Net Wolf UK
+ *  Copyright 2019 Net Wolf UK
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,13 +21,13 @@ package chatbot.teamcity.web;
 import org.jetbrains.annotations.NotNull;
 
 import jetbrains.buildServer.controllers.BaseAjaxActionController;
-import jetbrains.buildServer.web.openapi.PluginDescriptor;
 import jetbrains.buildServer.web.openapi.WebControllerManager;
 
 /**
  * This class simply holds the actions available at  "/admin/chatBotAction.html"
  * Actions need to inject this class and register themselves.
  */
+@SuppressWarnings("squid:MaximumInheritanceDepth")
 public class ChatBotConfigurationEditPageActionController extends BaseAjaxActionController {
 	
 	public static final String ACTION_TYPE = "action";
@@ -39,8 +39,7 @@ public class ChatBotConfigurationEditPageActionController extends BaseAjaxAction
     public static final String CONFIG_TYPE = "chatbot.type";
     public static final String PROJECT_ID = "projectId";
     
-  public ChatBotConfigurationEditPageActionController(@NotNull final PluginDescriptor pluginDescriptor,
-                                        	   @NotNull final WebControllerManager controllerManager) {
+  public ChatBotConfigurationEditPageActionController(@NotNull final WebControllerManager controllerManager) {
     super(controllerManager);
     controllerManager.registerController("/admin/chatBotAction.html", this);
   }

@@ -21,9 +21,9 @@ import jetbrains.buildServer.users.SUser;
 
 public class ListProjectsCommand extends BaseCommand implements CommandExecutor {
 	
-	final private Pattern listProjectsPatternWithName = Pattern.compile("^list projects (.+)$");
-	final private Pattern listProjectsPattern = Pattern.compile("^list projects$");
-	private final Permissions permissions = new Permissions(Permission.VIEW_PROJECT); 
+	private static final Pattern listProjectsPatternWithName = Pattern.compile("^list projects (.+)$");
+	private static final Pattern listProjectsPattern = Pattern.compile("^list projects$");
+	private static final Permissions permissions = new Permissions(Permission.VIEW_PROJECT); 
 
 	
 	private final UserService userService;
@@ -71,9 +71,9 @@ public class ListProjectsCommand extends BaseCommand implements CommandExecutor 
 				Loggers.SERVER.debug("ListProjectsCommand :: User '" + user + "' is not permisioned to see any matching buildTypes. Search string was: '" + projectSearchString + "'");
 				response.addMessage("Sorry, {user}. No matching project found with the name '" + context.getProperty(PROJECT_SEARCH_STRING) + "'.");
 			} else {
-				projects.forEach( project -> {
-					response.addMessage("{fixedWidth}" + project.getExternalId() + "{/fixedWidth} : " + project.getName());
-				});
+				projects.forEach( project -> 
+					response.addMessage("{fixedWidth}" + project.getExternalId() + "{/fixedWidth} : " + project.getName())
+				);
 			}
 
 		} catch (UserNotFoundException ex) {

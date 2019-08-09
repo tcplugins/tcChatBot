@@ -25,6 +25,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SlackChatClient implements ChatClient, EventListener, FailureListener, CloseListener {
 	
+	private static final String LOGGING_PREFIX = "SlackChatClient :: ";
+	private static final String BUNDLE_KEY_USER_NAME = "user_name";
+	private static final String BUNDLE_KEY_CHANNEL = "channel";
+	
 	@Getter
 	private final String configId; 
 	private final String chatInstanceId;
@@ -49,11 +53,10 @@ public class SlackChatClient implements ChatClient, EventListener, FailureListen
 	public void respond(Response response) {
 		try {
 			realTimeMessagingClient.sendMessage(slackChatMessasgeAdaptor.toClient(response));
-		} catch (Throwable se) {
-			Loggers.SERVER.warn("SlackChatClient :: " + this.getInstanceId(), se);
+		} catch (Exception se) {
+			Loggers.SERVER.warn(LOGGING_PREFIX + this.getInstanceId(), se);
 			response.setMessage("Oh dear! An error occurred handling your request. Please see the `teamcity-server.log` for details. My ID is: '" + getInstanceId() + "' and the Exception was: " + se.getMessage());
 			response.setMessenger(this);
-			//respond(response);
 		}
 	}
 	
@@ -78,10 +81,10 @@ public class SlackChatClient implements ChatClient, EventListener, FailureListen
 				} else {
 					sendUserValidationUrl(message, userKey);
 				}
-			} catch (Throwable se) {
-				Loggers.SERVER.warn("SlackChatClient :: " + this.getInstanceId(), se);
+			} catch (Exception se) {
+				Loggers.SERVER.warn(LOGGING_PREFIX + this.getInstanceId(), se);
 				Response response = new Response();
-				response.setBundle(new Bundle().set("channel", getChannelName(message)).set("usern_name", "unknown"));
+				response.setBundle(new Bundle().set(BUNDLE_KEY_CHANNEL, getChannelName(message)).set(BUNDLE_KEY_USER_NAME, "unknown"));
 				response.setMessage("Oh dear! An error occurred handling your request. Please see the `teamcity-server.log` for details. My ID is: '" + getInstanceId() + "' and the Exception was: " + se.getMessage());
 				response.setMessenger(this);
 				respond(response);
@@ -92,7 +95,7 @@ public class SlackChatClient implements ChatClient, EventListener, FailureListen
 
 	private void sendUserValidationUrl(JsonNode message, UserKey userKey) {
 		String dmChannelName = this.slackUserService.getDmChannelName(userKey.getChatUserName(), this.token);
-		Bundle bundle = new Bundle().set("channel", getChannelName(message)).set("user_name", userKey.getChatUserName());
+		Bundle bundle = new Bundle().set(BUNDLE_KEY_CHANNEL, getChannelName(message)).set(BUNDLE_KEY_USER_NAME, userKey.getChatUserName());
 		Response setupResponse = new Response();
 		setupResponse.setBundle(bundle);
 		setupResponse.setMessage("Hi <@" + userKey.getChatUserName() + ">. We've not met yet. I'll DM you to get setup.");
@@ -100,7 +103,7 @@ public class SlackChatClient implements ChatClient, EventListener, FailureListen
 		respond(setupResponse);
 		User user = new User(userKey);
 		Response dmResponse = new Response();
-		bundle = new Bundle().set("channel", dmChannelName).set("user_name", userKey.getChatUserName());
+		bundle = new Bundle().set(BUNDLE_KEY_CHANNEL, dmChannelName).set(BUNDLE_KEY_USER_NAME, userKey.getChatUserName());
 		dmResponse.setBundle(bundle);
 		dmResponse.setMessenger(this);
 		try {
@@ -116,8 +119,8 @@ public class SlackChatClient implements ChatClient, EventListener, FailureListen
 	}
 
 	private String getChannelName(JsonNode message) {
-		Loggers.SERVER.info("Channel is "+ message.get("channel") );
-		return message.get("channel").asText();
+		Loggers.SERVER.info("Channel is "+ message.get(BUNDLE_KEY_CHANNEL) );
+		return message.get(BUNDLE_KEY_CHANNEL).asText();
 	}
 
 	private boolean isRelevantEvent(JsonNode message) {
@@ -141,8 +144,8 @@ public class SlackChatClient implements ChatClient, EventListener, FailureListen
 	public Bundle createBundle(UserKey userKey) {
 		return Bundle.create("team", userKey.getChatClientGroup())
 					 .set("user", userKey.getChatUserName())
-					 .set("user_name", userKey.getChatUserName())
-					 .set("channel", this.slackUserService.getDmChannelName(userKey.getChatUserName(), this.token));
+					 .set(BUNDLE_KEY_USER_NAME, userKey.getChatUserName())
+					 .set(BUNDLE_KEY_CHANNEL, this.slackUserService.getDmChannelName(userKey.getChatUserName(), this.token));
 	}
 
 
@@ -150,39 +153,46 @@ public class SlackChatClient implements ChatClient, EventListener, FailureListen
 	@Override
 	public void start() {
 		try {
-			Loggers.SERVER.info("SlackChatClient :: Starting chat instance '" + this.getInstanceId()  + "' built from config '" + this.getConfigId()  + "'" );
+			Loggers.SERVER.info(LOGGING_PREFIX + "Starting chat instance '" + getInstanceInfo());
 			realTimeMessagingClient = SlackClientFactory.createSlackRealTimeMessagingClient(token);
 			realTimeMessagingClient.addListener(Event.MESSAGE, this);
 			realTimeMessagingClient.addFailureListener(this);
 			realTimeMessagingClient.addCloseListener(this);
 			realTimeMessagingClient.connect();
 		} catch (Exception ex) {
-			Loggers.SERVER.info("SlackChatClient :: Exception occurred while starting chat instance '" + this.getInstanceId()  + " built from config '" + this.getConfigId()  + "' :: " + ex.getMessage() );
+			Loggers.SERVER.info(LOGGING_PREFIX + "Exception occurred while starting chat instance '" + getInstanceInfo() + " :: " + ex.getMessage() );
 			throw new ChatClientExecutionException(ex.getMessage());
 		}
+	}
+
+	private String getInstanceInfo() {
+		return this.getInstanceId()  + "' built from config '" + this.getConfigId()  + "'" ;
 	}
 
 	@Override
 	public void stop() {
 		try {
-			Loggers.SERVER.info("SlackChatClient :: Stopping chat instance '" + this.getInstanceId()  + " built from config '" + this.getConfigId()  + "'" );
+			Loggers.SERVER.info(LOGGING_PREFIX + "Stopping chat instance '" + getInstanceInfo() );
 			realTimeMessagingClient.close();
 		} catch (Exception ex) {
-			Loggers.SERVER.info("SlackChatClient :: Exception occurred while stopping chat instance '" + this.getInstanceId()  + " built from config '" + this.getConfigId()  + "' :: " + ex.getMessage() );
+			Loggers.SERVER.info(LOGGING_PREFIX + "Exception occurred while stopping chat instance '" + getInstanceInfo() + " :: " + ex.getMessage() );
 			throw new ChatClientExecutionException(ex.getMessage());
 		}
 	}
 
 	@Override
 	public void onFailure(Throwable t) {
-		Loggers.SERVER.warn("SlackChatClient :: ", t);
+		Loggers.SERVER.warn(LOGGING_PREFIX, t);
 	}
 
 	@Override
+	@SuppressWarnings("squid:S2142")
 	public void onClose() {
 		Loggers.SERVER.warn("SlackChatClient :: Received closed connection event! Attempting to restart connection.");
 		this.stop();
-		try { Thread.sleep(10000); } catch (InterruptedException e) {}
+		try { Thread.sleep(10000); } catch (InterruptedException e) {
+			Loggers.SERVER.debug(LOGGING_PREFIX + "Thread sleep interrupted");
+		}
 		this.start();
 	}
 

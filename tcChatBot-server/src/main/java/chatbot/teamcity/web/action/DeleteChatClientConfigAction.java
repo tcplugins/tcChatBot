@@ -20,6 +20,8 @@ package chatbot.teamcity.web.action;
 
 import static chatbot.teamcity.web.ChatBotConfigurationEditPageActionController.CONFIG_ID;
 import static chatbot.teamcity.web.ChatBotConfigurationEditPageActionController.PROJECT_ID;
+import static chatbot.teamcity.web.ChatBotUserLinkingController.REDIRECT_KEY;
+import static chatbot.teamcity.web.ChatBotUserLinkingController.STATUS_KEY;
 
 import java.util.Objects;
 
@@ -41,10 +43,9 @@ import jetbrains.buildServer.web.openapi.ControllerAction;
 
 public class DeleteChatClientConfigAction extends ChatClientConfigAction implements ControllerAction {
 
-	private final ProjectManager myProjectManager;
+	private static final String CHATBOT_ACTION = "deleteChatBot";
 	private final ChatClientRestarter myChatClientRestarter;
 	private final ChatClientConfigManager myChatClientConfigManager;
-	private final static String CHATBOT_ACTION = "deleteChatBot";
 
 	public DeleteChatClientConfigAction(@NotNull ProjectManager projectManager,
 									 @NotNull final ChatClientRestarter chatClientRestarter,
@@ -84,8 +85,8 @@ public class DeleteChatClientConfigAction extends ChatClientConfigAction impleme
 		}
 		ActionMessages.getOrCreateMessages(request).addMessage("chatBotInfoUpdateResult",
 			"ChatBot Config with ID '" + configId + "' successfully deleted");
-		ajaxResponse.setAttribute("status", "OK");
-		ajaxResponse.setAttribute("redirect", "false");
+		ajaxResponse.setAttribute(STATUS_KEY, "OK");
+		ajaxResponse.setAttribute(REDIRECT_KEY, "false");
 	}
 
 

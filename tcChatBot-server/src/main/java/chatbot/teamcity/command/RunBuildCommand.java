@@ -25,8 +25,8 @@ import jetbrains.buildServer.users.SUser;
 
 public class RunBuildCommand extends BaseCommand implements CommandExecutor {
 	
-	final private Pattern runBuildPattern = Pattern.compile("^run (.+)$");
-	private final Permissions permissions = new Permissions(Permission.RUN_BUILD); 
+	private static final Pattern runBuildPattern = Pattern.compile("^run (.+)$");
+	private static final Permissions permissions = new Permissions(Permission.RUN_BUILD); 
 	
 	private final UserService userService;
 	private final BuildService buildService;

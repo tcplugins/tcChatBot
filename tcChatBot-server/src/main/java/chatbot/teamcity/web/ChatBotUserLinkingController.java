@@ -17,13 +17,17 @@ import chatbot.teamcity.model.ValidationHolder;
 import chatbot.teamcity.service.UserService;
 import jetbrains.buildServer.controllers.BaseController;
 import jetbrains.buildServer.serverSide.SBuildServer;
-import jetbrains.buildServer.serverSide.auth.SecurityContext;
 import jetbrains.buildServer.users.SUser;
 import jetbrains.buildServer.web.openapi.PluginDescriptor;
 import jetbrains.buildServer.web.openapi.WebControllerManager;
 import jetbrains.buildServer.web.util.SessionUser;
 
+@SuppressWarnings("squid:MaximumInheritanceDepth")
 public class ChatBotUserLinkingController extends BaseController {
+	
+	public static final String ERROR_KEY = "error";
+	public static final String REDIRECT_KEY = "redirect";
+	public static final String STATUS_KEY = "status";
 	
 	private PluginDescriptor myPluginDescriptor;
 	private UserService myUserService;
@@ -31,7 +35,6 @@ public class ChatBotUserLinkingController extends BaseController {
 
 	public ChatBotUserLinkingController(@NotNull final SBuildServer buildServer,
 			@NotNull final UserService userService, @NotNull ChatClientManager chatClientManager,
-			@NotNull final SecurityContext securityContext,
 			@NotNull final PluginDescriptor pluginDescriptor, @NotNull final WebControllerManager manager) {
 		super(buildServer);
 		myPluginDescriptor = pluginDescriptor;
@@ -59,12 +62,12 @@ public class ChatBotUserLinkingController extends BaseController {
 					client.respond(message);
 				}
 			} catch (UserNotFoundException userNotFoundEx) {
-				mv.getModel().put("error", userNotFoundEx.getMessage());
+				mv.getModel().put(ERROR_KEY, userNotFoundEx.getMessage());
 			} catch (IllegalArgumentException ex) {
-				mv.getModel().put("error", "Sorry, that looks like an invalid token. I could not link your account.");
+				mv.getModel().put(ERROR_KEY, "Sorry, that looks like an invalid token. I could not link your account.");
 			}
 		} else {
-			mv.getModel().put("error", "No token found. Sorry I could not link your accounts.");
+			mv.getModel().put(ERROR_KEY, "No token found. Sorry I could not link your accounts.");
 		}
 		return mv;
 	}

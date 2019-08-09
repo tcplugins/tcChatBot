@@ -22,7 +22,9 @@ public class ChatClientConfigFactory {
 	
 	private static final List<String> KEYS = Arrays.asList(CONFIG_ID_KEY, NAME_KEY, CLIENT_TYPE_KEY, PROJECT_ID_KEY, EMAIL_AUTO_KEY);
 
-	public static ChatClientConfig readFrom(Map<String, String> parameters, String projectInternalId) {
+	private ChatClientConfigFactory(){}
+	
+	public static ChatClientConfig readFrom(Map<String, String> parameters) {
 		
 		ChatClientConfig config = new ChatClientConfig();
 		config.setConfigId(parameters.get(CONFIG_ID_KEY));
@@ -54,7 +56,7 @@ public class ChatClientConfigFactory {
 	}
 
 	public static ChatClientConfig fromDescriptor(SProjectFeatureDescriptor myDescriptor) {
-		return readFrom(myDescriptor.getParameters(), myDescriptor.getProjectId());
+		return readFrom(myDescriptor.getParameters());
 	}
 	
 	public static String toJson(ChatClientConfig config) {
